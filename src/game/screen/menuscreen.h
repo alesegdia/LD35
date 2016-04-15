@@ -22,6 +22,10 @@ public:
 private:
 	LD35Game* m_game;
 
+	float timer = 0.f;
+	float param = 1.f;
+	int points = 0 ;
+
 };
 
 

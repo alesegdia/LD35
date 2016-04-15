@@ -29,17 +29,17 @@ void LD35Game::create()
 		fprintf(stderr, "Failed to load font!\n");
 	}
 
-	m_gameplayScreen.reset(new MenuScreen(this));
-	m_mapScreen.reset(new GameplayScreen(this));
+	m_menuScreen.reset(new MenuScreen(this));
+	m_gameplayScreen.reset(new GameplayScreen(this));
 
-	setScreen(m_mapScreen);
+	setScreen(m_menuScreen);
 }
 
 void LD35Game::dispose()
 {
 	Assets::Dispose();
+	m_menuScreen.reset();
 	m_gameplayScreen.reset();
-	m_mapScreen.reset();
 	al_destroy_font(m_font);
 }
 
@@ -49,6 +49,7 @@ void LD35Game::update(double delta)
 	{
 		close();
 	}
+
 	Game::update(delta);
 }
 

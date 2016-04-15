@@ -24,8 +24,8 @@ public:
 	void update(double delta) override ;
 
 	// all screens
-	std::shared_ptr<MenuScreen> m_gameplayScreen;
-	std::shared_ptr<GameplayScreen> m_mapScreen;
+	std::shared_ptr<MenuScreen> m_menuScreen;
+	std::shared_ptr<GameplayScreen> m_gameplayScreen;
 
 	ALLEGRO_FONT* m_font = nullptr;
 	Camera m_camera1;

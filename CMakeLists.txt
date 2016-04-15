@@ -26,6 +26,8 @@ elseif(UNIX)
 	target_link_libraries(ld35 allegro_primitives)
 	target_link_libraries(ld35 allegro_font)
 	target_link_libraries(ld35 allegro_ttf)
+	target_link_libraries(ld35 allegro_audio)
+	target_link_libraries(ld35 allegro_acodec)
 endif()
 
 

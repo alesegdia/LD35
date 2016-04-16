@@ -9,15 +9,18 @@
 #include <alligator/game/iscreen.h>
 #include <alligator/camera/camera.h>
 
-#include "screen/gameplayscreen.h"
+#include "screen/mapscreen.h"
 #include "screen/menuscreen.h"
+#include "screen/battlescreen.h"
 
-class LD35Game : public Game {
+#include "battle/entity.h"
+
+class LD35 : public Game {
 
 public:
 
-	LD35Game ( int sw, int sh );
-	virtual ~LD35Game();
+	LD35 ( int sw, int sh );
+	virtual ~LD35();
 
 	void create() override ;
 	void dispose() override ;
@@ -25,7 +28,10 @@ public:
 
 	// all screens
 	std::shared_ptr<MenuScreen> m_menuScreen;
-	std::shared_ptr<GameplayScreen> m_gameplayScreen;
+	std::shared_ptr<MapScreen> m_mapScreen;
+	std::shared_ptr<BattleScreen> m_battleScreen;
+
+	Player::SharedPtr m_player;
 
 	ALLEGRO_FONT* m_font = nullptr;
 	Camera m_camera1;

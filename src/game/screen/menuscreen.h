@@ -6,11 +6,11 @@
 #include <alligator/input/input.h>
 
 
-class LD35Game;
+class LD35;
 
 class MenuScreen : public IScreen {
 public:
-	MenuScreen(LD35Game* g);
+	MenuScreen(LD35* g);
 	virtual ~MenuScreen();
 
 	// IScreen interface
@@ -20,7 +20,7 @@ public:
 	void hide() override ;
 
 private:
-	LD35Game* m_game;
+	LD35* m_game;
 
 	float timer = 0.f;
 	float param = 1.f;

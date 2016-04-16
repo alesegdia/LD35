@@ -9,7 +9,7 @@
 #include "../assets.h"
 
 
-MenuScreen::MenuScreen( LD35Game* g )
+MenuScreen::MenuScreen( LD35* g )
 {
 	m_game = g;
 }
@@ -40,6 +40,20 @@ void MenuScreen::update(double delta)
 	}
 
 	timer += delta * 10;
+
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_P) )
+	{
+		if( Assets::instance->music->playing() )
+		{
+			m_game->setScreen(m_game->m_mapScreen);
+			Assets::instance->music->pause();
+		}
+		else
+		{
+			Assets::instance->music->resume();
+		}
+	}
+
 
 }
 

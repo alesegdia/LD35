@@ -14,33 +14,33 @@ Assets::Assets()
 	tilesetSheet.reset(new Spritesheet(5, 6, tileset));
 	tilesetSheet8.reset(new Spritesheet(10, 12, tileset));
 
-	player = al_load_bitmap("assets/dknight-sheet.png");
+	player = al_load_bitmap("assets/playersheet.png");
 	std::cout << player << std::endl;
-	playerSheet.reset(new Spritesheet(4, 4, player));
+	playerSheet.reset(new Spritesheet(6, 12, player));
 
 	playerStandU.reset(new Animation(0.1f, 1));
-	playerStandU->addFrame(playerSheet->getFrame(0, 1));
+	playerStandU->addFrame(playerSheet->getFrame(0, 5));
 
 	playerStandD.reset(new Animation(0.1f, 1));
-	playerStandD->addFrame(playerSheet->getFrame(0, 0));
+	playerStandD->addFrame(playerSheet->getFrame(0, 4));
 
 	playerStandL.reset(new Animation(0.1f, 1));
-	playerStandL->addFrame(playerSheet->getFrame(0, 2));
+	playerStandL->addFrame(playerSheet->getFrame(0, 6));
 
 	playerStandR.reset(new Animation(0.1f, 1));
-	playerStandR->addFrame(playerSheet->getFrame(0, 3));
+	playerStandR->addFrame(playerSheet->getFrame(0, 7));
 
-	playerWalkU.reset(new Animation(0.1f, 4));
-	playerWalkU->addFrames(playerSheet->getFrames(4, 7));
+	playerWalkU.reset(new Animation(0.1f, 2));
+	playerWalkU->addFrames(playerSheet->getFrames(6, 7));
 
-	playerWalkD.reset(new Animation(0.1f, 4));
-	playerWalkD->addFrames(playerSheet->getFrames(0, 3));
+	playerWalkD.reset(new Animation(0.1f, 2));
+	playerWalkD->addFrames(playerSheet->getFrames(0, 1));
 
-	playerWalkL.reset(new Animation(0.1f, 4));
-	playerWalkL->addFrames(playerSheet->getFrames(8, 11));
+	playerWalkL.reset(new Animation(0.1f, 6));
+	playerWalkL->addFrames(playerSheet->getFrames(12, 17));
 
-	playerWalkR.reset(new Animation(0.1f, 4));
-	playerWalkR->addFrames(playerSheet->getFrames(12, 15));
+	playerWalkR.reset(new Animation(0.1f, 6));
+	playerWalkR->addFrames(playerSheet->getFrames(18, 23));
 
 	cursorUp = tilesetSheet->getFrame(3, 1);
 	cursorDown = tilesetSheet->getFrame(3, 0);

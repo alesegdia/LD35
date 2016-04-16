@@ -5,18 +5,18 @@
 
 #include "gameconfig.h"
 
-LD35Game::LD35Game(int sw, int sh)
+LD35::LD35(int sw, int sh)
 	: Game( sw, sh ), m_camera1(Vec2f(sw, sh)), m_camera2(Vec2f(sw, sh))
 {
 
 }
 
-LD35Game::~LD35Game()
+LD35::~LD35()
 {
 
 }
 
-void LD35Game::create()
+void LD35::create()
 {
 	Assets::Initialize();
 
@@ -24,30 +24,48 @@ void LD35Game::create()
 	m_camera2.scale(GameConfig::CAMERA_SCALE, GameConfig::CAMERA_SCALE);
 	m_font = al_load_ttf_font("assets/dafont.ttf", 8, 0);
 
+	m_player.reset(new Player());
+
 	if( !m_font )
 	{
 		fprintf(stderr, "Failed to load font!\n");
 	}
 
 	m_menuScreen.reset(new MenuScreen(this));
-	m_gameplayScreen.reset(new GameplayScreen(this));
+	m_mapScreen.reset(new MapScreen(this));
+	m_battleScreen.reset(new BattleScreen(this));
 
-	setScreen(m_menuScreen);
+	setScreen(m_battleScreen);
 }
 
-void LD35Game::dispose()
+void LD35::dispose()
 {
 	Assets::Dispose();
 	m_menuScreen.reset();
-	m_gameplayScreen.reset();
+	m_mapScreen.reset();
 	al_destroy_font(m_font);
 }
 
-void LD35Game::update(double delta)
+void LD35::update(double delta)
 {
 	if( Input::IsKeyDown(ALLEGRO_KEY_ESCAPE) )
 	{
 		close();
+	}
+
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F1) )
+	{
+		setScreen(m_menuScreen);
+	}
+
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F2) )
+	{
+		setScreen(m_mapScreen);
+	}
+
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F3) )
+	{
+		setScreen(m_battleScreen);
 	}
 
 	Game::update(delta);

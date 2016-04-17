@@ -21,7 +21,14 @@ void PlayerHud::render()
 		{
 			al_draw_bitmap(Assets::instance->cursorRight, -10, 46 + (i - m_top) * 10, 0);
 		}
-		al_draw_text(m_font, al_map_rgb(255, 255, 255), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
+		if( m_player->abilities()[i]->canUse() )
+		{
+			al_draw_text(m_font, al_map_rgb(255, 255, 255), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
+		}
+		else
+		{
+			al_draw_text(m_font, al_map_rgb(192, 192, 192), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
+		}
 	}
 
 	// draw helpers to show more
@@ -36,8 +43,8 @@ void PlayerHud::render()
 	}
 
 	// draw player health bar
-	al_draw_filled_rectangle(3, 46, 50, 48, al_map_rgb(102, 57, 49));
-	al_draw_filled_rectangle(50, 46, 77, 48, al_map_rgb(223, 113, 38));
+	al_draw_filled_rectangle(3, 46, 77, 48, al_map_rgb(102, 57, 49));
+	al_draw_filled_rectangle(3, 46, m_player->lifePercentage() * 77.f, 48, al_map_rgb(223, 113, 38));
 
 }
 
@@ -65,8 +72,15 @@ HudReturn PlayerHud::update()
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
 	{
-		m_player->setShape(m_player->abilities()[m_selected]->shapeType());
-		done = HudSuccess;
+		if( m_player->abilities()[m_selected]->canUse() )
+		{
+			m_player->setShape(m_player->abilities()[m_selected]->shapeType());
+			done = HudSuccess;
+		}
+		else
+		{
+			done = HudNoOp;
+		}
 	}
 
 	return done;
@@ -272,7 +286,7 @@ std::vector<Entity *> EnemyHud::getSelecteds(Ability::SharedPtr ability)
 				enemies_selected.push_back(e.get());
 			}
 		}
-
+		break;
 	default:
 	case PickSingle:
 		if( enemy != nullptr ) enemies_selected.push_back(enemy.get());

@@ -86,6 +86,44 @@ public:
 
 	void setHover(bool hover);
 
+	bool enemyTurn( Player::SharedPtr player, float& damage )
+	{
+		for( m_nextEnemyTurn; m_nextEnemyTurn < LayoutWidth * LayoutHeight; m_nextEnemyTurn++ )
+		{
+			Enemy::SharedPtr e = m_enemyLayout.data()[m_nextEnemyTurn];
+			if( e != nullptr )
+			{
+				std::vector<Entity*> playerlist = { player.get() };
+				e->abilities()[0]->apply((Entity*)e.get(), playerlist);
+				m_nextEnemyTurn++;
+				break;
+			}
+		}
+
+		if( m_nextEnemyTurn >= LayoutWidth * LayoutHeight )
+		{
+			m_nextEnemyTurn = 0;
+			return true;
+		}
+		return false;
+	}
+
+	int numEnemies()
+	{
+		int i = 0;
+		for( int x = 0; x < m_enemyLayout.cols(); x++ )
+		{
+			for( int y = 0; y < m_enemyLayout.rows(); y++ )
+			{
+				if( m_enemyLayout.get(x, y) != nullptr )
+				{
+					i++;
+				}
+			}
+		}
+		return i;
+	}
+
 private:
 
 	void drawHealthFor( Enemy::SharedPtr enemy, int x, int y );
@@ -96,6 +134,8 @@ private:
 
 	int m_selectedX = 0;
 	int m_selectedY = 0;
+
+	int m_nextEnemyTurn = 0;
 
 	bool m_hover = false;
 

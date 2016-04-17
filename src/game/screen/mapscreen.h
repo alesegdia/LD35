@@ -27,44 +27,43 @@ public:
 
 	void scroll(Vec2f new_cam_pos, Camera& cam);
 
-	void map( const Matrix2Di& map )
+	void map( const Matrix2Di& map );
+
+	int getTileFrontPlayer();
+
+	Matrix2Di::SharedPtr map();
+
+	Vec2i findFirstWalkable();
+
+	Vec2i randomFreeTile();
+
+	void infoMessage(std::string line1, std::string line2 = "", std::string line3 = "", std::string line4 = "")
 	{
-		if( m_map == nullptr )
-		{
-			m_map.reset(new Matrix2Di(map));
-		}
-		else
-		{
-			*m_map = map;
-		}
+		m_infomessage1 = line1;
+		m_infomessage2 = line2;
+		m_infomessage3 = line3;
+		m_infomessage4 = line4;
+		m_isInfo = true;
 	}
 
-	Matrix2Di::SharedPtr map()
-	{
-		return m_map;
-	}
-
-	Vec2i findFirstWalkable()
-	{
-		for( int x = 0; x < m_map->cols(); x++ )
-		{
-			for( int y = 0; y < m_map->rows(); y++ )
-			{
-				if( m_map->get(x, y) == 0 )
-				{
-					return Vec2i(x, y);
-				}
-			}
-		}
-		return Vec2i(-1, -1);
-	}
-
+	void nextLevel();
 
 private:
 	LD35* m_game;
 	MapRenderer::SharedPtr m_mapRenderer;
 	PlayerPawnMap::SharedPtr m_player;
 	Matrix2Di::SharedPtr m_map;
+
+	std::vector<Vec2i> m_freeTiles;
+
+	bool m_isInfo = false;
+
+	std::string m_infomessage1;
+	std::string m_infomessage2;
+	std::string m_infomessage3;
+	std::string m_infomessage4;
+
+	Vec2i m_prevPlayerPos;
 
 
 };

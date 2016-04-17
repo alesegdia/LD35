@@ -24,10 +24,11 @@ public:
 
 	bool isWalkable( int x_tile, int y_tile );
 
+	Vec2i tile();
+
 protected:
 	void setAnim( Animation::SharedPtr anim );
 
-	Vec2i tile();
 
 private:
 	Vec2f m_position;
@@ -48,6 +49,11 @@ public:
 	PlayerPawnMap( const Vec2f& pos, Matrix2Di::SharedPtr map  );
 
 	void update(double delta) override;
+
+	char facing()
+	{
+		return m_facing;
+	}
 
 private:
 

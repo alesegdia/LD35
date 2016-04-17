@@ -89,12 +89,14 @@ class Ability
 public:
 	typedef std::shared_ptr<Ability> SharedPtr;
 
-	Ability( ShapeType stype, std::string txt, PickType pt = PickSingle, AbilityApplicator* applic = nullptr, float effectiveness = 1.f )
+	Ability( ShapeType stype, std::string txt, PickType pt = PickSingle, AbilityApplicator* applic = nullptr, float effectiveness = 1.f, int cooldown = 1.f )
 		: m_shapeType(stype),
 		  m_text(txt),
 		  m_pickType(pt),
 		  applicator(applic),
-		  m_effectiveness(effectiveness)
+		  m_effectiveness(effectiveness),
+		  cooldown(cooldown),
+		  currentCooldown(0)
 	{}
 
 	void apply( Entity* source, std::vector<Entity*> targets )
@@ -102,7 +104,7 @@ public:
 		if( applicator != nullptr )
 		{
 			(*applicator)(this, source, targets);
-			currentCooldown = cooldown;
+			currentCooldown = cooldown + 1;
 		}
 	}
 
@@ -131,12 +133,13 @@ public:
 		return m_pickType;
 	}
 
+	int currentCooldown;
+
 private:
 
 	ShapeType m_shapeType;
 	std::string m_text;
 	int cooldown;
-	int currentCooldown;
 	float m_effectiveness;
 	PickType m_pickType;
 
@@ -155,14 +158,16 @@ public:
 	void operator()( Ability* ability, Entity* source, std::vector<Entity*> targets ) override
 	{
 		float source_atk = ATK_FACTOR * source->getStat(ATK);
+		std::vector<Entity*> already_targeted;
 		for( Entity* target : targets )
 		{
 			if( target != nullptr )
 			{
+				already_targeted.push_back(target);
 				float target_def = DEF_FACTOR * target->getStat(DEF);
 				float dmg = std::max(0.f, source_atk * ability->effectiveness() - target_def) * DMG_FACTOR;
 				std::cout << "effec: " << ability->effectiveness() << ", srcatk: " << source_atk << ", tgtdef: " << target_def << ", dmg: " << dmg << std::endl;
-				target->decreaseHP(dmg);
+				target->decreaseHP(std::max(1.f, dmg));
 			}
 		}
 	}
@@ -178,14 +183,36 @@ struct StatusEffect {
 	int turnsLeft;
 };
 
+
+class AbilityApplicators
+{
+public:
+	DealDamageAbilityApplicator damageAP;
+};
+
+
 class Enemy : public Entity
 {
 public:
+
+	AbilityApplicators aps;
+
 	typedef std::shared_ptr<Enemy> SharedPtr;
 
-	Enemy( Stats stats ) : Entity(stats, Stats(1, 1, 1, 1)) {}
+	Enemy( Stats stats, float attack_effectiveness = 1.f ) : Entity(stats, Stats(1, 1, 1, 1))
+	{
+		abilities().push_back(Ability::SharedPtr(new Ability(Water, "", PickSingle, &(aps.damageAP), attack_effectiveness)));
+	}
 
 	std::vector<StatusEffect> status;
+
+	std::vector<Ability::SharedPtr>& abilities()
+	{
+		return m_abilities;
+	}
+
+private:
+	std::vector<Ability::SharedPtr> m_abilities;
 
 };
 
@@ -208,12 +235,6 @@ public:
 	}
 };
 
-class AbilityApplicators
-{
-public:
-	DealDamageAbilityApplicator damageAP;
-};
-
 class Player : public Entity
 {
 private:
@@ -226,7 +247,7 @@ public:
 		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Headbutt", PickSingle, &(aps.damageAP), 1.f)));
 
 		// WATER
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "PressureShot", PickSingle, &(aps.damageAP), 2.f)));
+		abilities().push_back(Ability::SharedPtr(new Ability(Water, "PressureShot", PickSingle, &(aps.damageAP), 2.f, 3)));
 		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Tsunami", PickAll, &(aps.damageAP), 3.f)));
 		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demoleculize", PickSelf)));
 
@@ -239,6 +260,21 @@ public:
 		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.damageAP), 2)));
 		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Fiery Beast", PickAll)));
 		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3)));
+	}
+
+	void turn()
+	{
+		for( Ability::SharedPtr ability : abilities() )
+		{
+			if( ability->currentCooldown > 0 )
+			{
+				ability->currentCooldown--;
+			}
+			else
+			{
+				ability->currentCooldown = 0;
+			}
+		}
 	}
 
 	void setShape( ShapeType st )
@@ -289,4 +325,5 @@ public:
 private:
 	std::vector<Ability::SharedPtr> m_abilities;
 	ShapeType currentShape = Water;
+
 };

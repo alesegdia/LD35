@@ -19,7 +19,15 @@ enum HudState : int
 {
 	ChooseAbility = 0,
 	ChooseEnemy,
-	EnemyTurn
+};
+
+enum BattleStatus : int
+{
+	PlayerTurn,
+	EnemyTurn,
+	DecideTurn,
+	InfoTurn,
+	EndBattle
 };
 
 
@@ -36,10 +44,28 @@ public:
 	void render() override;
 	void hide() override;
 
+	void setEnemyTurn()
+	{
+		m_battleStatus = EnemyTurn;
+		m_lastx = m_lasty = 0;
+	}
+
+	void message( const char* txt, BattleStatus returningStatus )
+	{
+		m_infomsg = txt;
+		m_battleStatus = InfoTurn;
+		m_storedStatus = returningStatus;
+	}
+
 private:
 	LD35* m_game;
 	PlayerHud m_hud;
 	EnemyHud m_enemyHud;
 	HudState m_hudState = ChooseAbility;
+	BattleStatus m_battleStatus = PlayerTurn;
+	std::string m_infomsg;
+	BattleStatus m_storedStatus;
+
+	int m_lastx, m_lasty;
 
 };

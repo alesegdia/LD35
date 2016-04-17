@@ -22,7 +22,12 @@ MenuScreen::~MenuScreen()
 void MenuScreen::show()
 {
 	std::cout << "playin!" << std::endl;
-	Assets::instance->music->play();
+	Assets::instance->battle->pause();
+	if( !Assets::instance->music->playing() )
+	{
+		Assets::instance->music->rewind();
+		Assets::instance->music->play();
+	}
 }
 
 void MenuScreen::update(double delta)

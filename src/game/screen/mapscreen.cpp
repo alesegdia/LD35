@@ -28,6 +28,7 @@ void MapScreen::show()
 					 m_game->m_player->levelingNotification.text2,
 					 m_game->m_player->levelingNotification.text3,
 					 m_game->m_player->levelingNotification.text4 );
+		Assets::instance->levelupSfx->play();
 		m_game->m_player->levelingNotification.isPresent = false;
 	}
 }

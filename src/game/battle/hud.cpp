@@ -59,6 +59,7 @@ HudReturn PlayerHud::update()
 	{
 		if( tryCursorUp() )
 		{
+			Assets::instance->clickSfx->play();
 			m_selected--;
 			m_player->setShape(m_player->abilities()[m_selected]->shapeType());
 		}
@@ -68,6 +69,7 @@ HudReturn PlayerHud::update()
 	{
 		if( tryCursorDown() )
 		{
+			Assets::instance->clickSfx->play();
 			m_selected++;
 			m_player->setShape(m_player->abilities()[m_selected]->shapeType());
 		}
@@ -146,14 +148,12 @@ void EnemyHud::render()
 		{
 			if( m_enemyLayout.get(x, y) != nullptr )
 			{
-				std::cout << m_enemyLayout.get(x, y)->type << std::endl;
 				ALLEGRO_BITMAP* bm = Assets::instance->eneAnimsData[m_enemyLayout.get(x, y)->type].currentFrame;
 				al_draw_bitmap(bm, 8 + x * 24, 5 + y * 21, 0);
 				drawHealthFor(m_enemyLayout.get(x, y), 8 + x * 24, 5 + y * 21);
 			}
 		}
 	}
-
 
 	if( !m_ignore )
 	{
@@ -183,7 +183,13 @@ HudReturn EnemyHud::update()
 	{
 		if( m_selectedY - 1 >= 0 )
 		{
+			Assets::instance->clickSfx->play();
+
 			m_selectedY--;
+		}
+		else
+		{
+			Assets::instance->errorSfx->play();
 		}
 	}
 
@@ -191,7 +197,13 @@ HudReturn EnemyHud::update()
 	{
 		if( m_selectedY + 1 < LayoutHeight )
 		{
+			Assets::instance->clickSfx->play();
+
 			m_selectedY++;
+		}
+		else
+		{
+			Assets::instance->errorSfx->play();
 		}
 	}
 
@@ -199,7 +211,13 @@ HudReturn EnemyHud::update()
 	{
 		if( m_selectedX - 1 >= 0 )
 		{
+			Assets::instance->clickSfx->play();
+
 			m_selectedX--;
+		}
+		else
+		{
+			Assets::instance->errorSfx->play();
 		}
 	}
 
@@ -207,7 +225,13 @@ HudReturn EnemyHud::update()
 	{
 		if( m_selectedX + 1 < LayoutWidth )
 		{
+			Assets::instance->clickSfx->play();
+
 			m_selectedX++;
+		}
+		else
+		{
+			Assets::instance->errorSfx->play();
 		}
 	}
 
@@ -217,13 +241,19 @@ HudReturn EnemyHud::update()
 		done = HudSuccess;
 		if( getSelecteds(m_ability).size() == 0 )
 		{
+			Assets::instance->errorSfx->play();
 			done = HudFailure;
+		}
+		else
+		{
+			Assets::instance->clickSfx->play();
 		}
 	}
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_BACKSPACE) )
 	{
 		done = HudBack;
+		Assets::instance->clickSfx->play();
 	}
 
 	return done;
@@ -266,7 +296,6 @@ std::vector<Entity *> EnemyHud::getSelecteds(Ability::SharedPtr ability)
 	switch( ability->pickType() )
 	{
 	case Pick2x2Block:
-		std::cout << "entering 2x2 pick" << std::endl;
 		for( int x = m_selectedX; x < m_selectedX + 2; x++ )
 		{
 			for( int y = m_selectedY; y < m_selectedY + 2; y++ )
@@ -292,14 +321,15 @@ std::vector<Entity *> EnemyHud::getSelecteds(Ability::SharedPtr ability)
 			}
 		}
 		break;
+	case PickSelf:
+		enemies_selected.push_back(m_player);
+		break;
 	default:
 	case PickSingle:
 		if( enemy != nullptr ) enemies_selected.push_back(enemy.get());
 		break;
-	case PickSelf:
-		enemies_selected.push_back(m_player);
-		break;
 	}
+
 	return enemies_selected;
 }
 

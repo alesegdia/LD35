@@ -19,6 +19,11 @@ BattleScreen::~BattleScreen()
 
 void BattleScreen::show()
 {
+	Assets::instance->music->pause();
+	Assets::instance->battle->rewind();
+	Assets::instance->battle->play();
+
+
 	m_enemyHud.clear();
 
 	//makeDummyParty();
@@ -44,6 +49,7 @@ void BattleScreen::show()
 
 void BattleScreen::update(double delta)
 {
+	Assets::instance->Update(delta);
 	if( m_battleStatus == InfoTurn )
 	{
 		if( m_infoForNotif )
@@ -107,6 +113,8 @@ void BattleScreen::update(double delta)
 				m_hudState = ChooseAbility;
 				Entity* ent = m_game->m_player.get();
 				m_hud.getSelected()->apply(ent, m_enemyHud.getSelecteds(m_hud.getSelected()));
+				m_game->m_player->stepStatusEffects(notifs);
+
 				m_enemyHud.checkAlive();
 				m_battleStatus = EnemyTurn;
 			}
@@ -123,7 +131,6 @@ void BattleScreen::update(double delta)
 			message(PlayerTurn, "Wow, that hurts!");
 			m_battleStatus = PlayerTurn;
 			m_game->m_player->turn();
-			m_game->m_player->stepStatusEffects(notifs);
 		}
 		else
 		{

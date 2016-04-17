@@ -15,6 +15,13 @@ MapScreen::~MapScreen()
 
 void MapScreen::show()
 {
+	Assets::instance->battle->pause();
+	if( !Assets::instance->music->playing() )
+	{
+		Assets::instance->music->rewind();
+		Assets::instance->music->play();
+	}
+
 	if( m_game->m_player->levelingNotification.isPresent )
 	{
 		infoMessage( m_game->m_player->levelingNotification.text1,

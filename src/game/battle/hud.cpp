@@ -146,7 +146,9 @@ void EnemyHud::render()
 		{
 			if( m_enemyLayout.get(x, y) != nullptr )
 			{
-				al_draw_bitmap(Assets::instance->enemyPlaceholder, 8 + x * 24, 5 + y * 21, 0);
+				std::cout << m_enemyLayout.get(x, y)->type << std::endl;
+				ALLEGRO_BITMAP* bm = Assets::instance->eneAnimsData[m_enemyLayout.get(x, y)->type].currentFrame;
+				al_draw_bitmap(bm, 8 + x * 24, 5 + y * 21, 0);
 				drawHealthFor(m_enemyLayout.get(x, y), 8 + x * 24, 5 + y * 21);
 			}
 		}
@@ -241,7 +243,7 @@ void EnemyHud::checkAlive()
 			Enemy::SharedPtr e = m_enemyLayout.get(x, y);
 			if( e != nullptr )
 			{
-				if( e->getStat(HP)  <= 0 )
+				if( e->currentHP()  <= 0 )
 				{
 					m_enemyLayout.set(x, y, nullptr);
 				}

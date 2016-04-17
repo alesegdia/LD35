@@ -8,7 +8,7 @@
 #include <stack>
 
 enum Stat {
-	HP, ATK, DEF, AGI
+	HP, ATK, DEF, AGI, NONE
 };
 
 struct Stats
@@ -22,6 +22,8 @@ enum StatusEffectType : int {
 	Healing,
 	Burnt,
 	Demolec,
+	Shell,
+	Fist,
 	None
 };
 
@@ -55,11 +57,12 @@ public:
 	{
 		switch(stat)
 		{
-		case HP: return m_currentHP;
+		case HP: return m_stats.hp;
 		case ATK: return m_stats.atk * m_shapeModStats.atk + m_stats.atk * m_statusModStats.atk; break;
 		case DEF: return m_stats.def * m_shapeModStats.def + m_stats.def * m_statusModStats.def; break;
 		case AGI: return m_stats.agi * m_shapeModStats.agi + m_stats.agi * m_statusModStats.agi; break;
 		}
+		return 0;
 	}
 
 	void decreaseHP( float qtt )
@@ -77,9 +80,6 @@ public:
 
 		switch( seff->type )
 		{
-		case Stun:
-
-			break;
 		case Healing:
 			m_currentHP += seff->value;
 			notifstack.push("Yo healin dawg!");
@@ -92,6 +92,18 @@ public:
 			m_statusModStats.agi = 2;
 			notifstack.push("You feel light!");
 			break;
+		case Shell:
+			m_statusModStats.def = 2;
+			notifstack.push("Rocking this!");
+			break;
+		case Fist:
+			m_statusModStats.atk = 2;
+			notifstack.push("Rolling that!");
+			break;
+		case Stun:
+			m_stunned = true;
+			notifstack.push("Stunned yo!");
+			break;
 		}
 	}
 
@@ -101,6 +113,15 @@ public:
 		{
 		case Demolec:
 			m_statusModStats.agi = 0;
+			break;
+		case Shell:
+			m_statusModStats.def = 0;
+			break;
+		case Fist:
+			m_statusModStats.atk = 0;
+			break;
+		case Stun:
+			m_stunned = false;
 			break;
 		}
 	}
@@ -130,7 +151,17 @@ public:
 	void healHP( float qtt )
 	{
 		m_currentHP += qtt;
-		m_currentHP = std::min(getStat(HP), m_currentHP);
+		m_currentHP = std::min(m_stats.hp, m_currentHP);
+	}
+
+	float currentHP()
+	{
+		return m_currentHP;
+	}
+
+	bool isStunned()
+	{
+		return m_stunned;
 	}
 
 	std::vector<StatusEffect::SharedPtr> status;
@@ -141,6 +172,7 @@ protected:
 	Stats m_stats;
 	Stats m_shapeModStats;
 	Stats m_statusModStats;
+	bool m_stunned = false;
 
 };
 
@@ -255,7 +287,7 @@ public:
 				float target_def = DEF_FACTOR * target->getStat(DEF);
 				float dmg = std::max(0.f, source_atk * ability->effectiveness() - target_def) * DMG_FACTOR;
 				std::cout << "effec: " << ability->effectiveness() << ", srcatk: " << source_atk << ", tgtdef: " << target_def << ", dmg: " << dmg << std::endl;
-				target->decreaseHP(std::max(1.f, dmg));
+				target->decreaseHP(std::max(0.f, dmg));
 				if( m_model != nullptr )
 				{
 					StatusEffect::SharedPtr se(new StatusEffect);
@@ -277,7 +309,7 @@ private:
 class OnlyStatusEffectAbilityApplicator : public AbilityApplicator
 {
 public:
-	void setup( bool self, StatusEffect* model, Stat influence_stat, float factor = 1.f )
+	void setup( bool self, StatusEffect* model, Stat influence_stat = NONE, float factor = 1.f )
 	{
 		m_self = self;
 		m_model = model;
@@ -369,6 +401,15 @@ public:
 	StatusEffect healing;
 	OnlyStatusEffectAbilityApplicator healAP;
 
+	StatusEffect shell;
+	OnlyStatusEffectAbilityApplicator shellAP;
+
+	StatusEffect fist;
+	OnlyStatusEffectAbilityApplicator fistAP;
+
+	StatusEffect stun;
+	DealDamageAbilityApplicator stunAttackAP;
+
 	AbilityApplicators()
 	{
 		burning.turnsLeft = 3;
@@ -381,6 +422,22 @@ public:
 		healing.type = Healing;
 		healing.value = 0 ;
 		healAP.setup(true, &healing, HP, 0.20f);
+
+		shell.turnsLeft = 4;
+		shell.type = Shell;
+		shell.value = 0;
+		shellAP.setup(true, &shell);
+
+		fist.turnsLeft = 4;
+		fist.type = Fist;
+		fist.value = 0;
+		fistAP.setup(true, &fist);
+
+		stun.turnsLeft = 2;
+		stun.type = Stun;
+		stun.value = 0;
+
+		stunAttackAP.setModel(&stun);
 	}
 
 };
@@ -392,10 +449,13 @@ public:
 
 	AbilityApplicators aps;
 
+	int type = 0;
+
 	typedef std::shared_ptr<Enemy> SharedPtr;
 
-	Enemy( Stats stats, float attack_effectiveness = 1.f ) : Entity(stats, Stats(1, 1, 1, 1))
+	Enemy( Stats stats, int type = 0, float attack_effectiveness = 4.f ) : Entity(stats, Stats(1, 1, 1, 1))
 	{
+		this->type = type;
 		abilities().push_back(Ability::SharedPtr(new Ability(Water, "", PickSingle, &(aps.damageAP), attack_effectiveness)));
 	}
 
@@ -427,9 +487,16 @@ public:
 class EntityFactory
 {
 public:
-	static Enemy::SharedPtr makeDummyEnemy()
+	static Enemy::SharedPtr makeDummyEnemy(int type)
 	{
-		Enemy::SharedPtr enemy(new Enemy(Stats(10, 5, 5, 5)));
+		Enemy::SharedPtr enemy(new Enemy(Stats(10, 5, 5, 5), type));
+		return enemy;
+	}
+
+	static Enemy::SharedPtr makeEnemyStats( int type, int points )
+	{
+		Stats stats(points * 2, points, points, points);
+		Enemy::SharedPtr enemy(new Enemy(stats, type));
 		return enemy;
 	}
 };
@@ -450,10 +517,11 @@ private:
 public:
 	typedef std::shared_ptr<Player> SharedPtr;
 
-	Player() : Entity(Stats(10, 5, 5, 5), Stats(1,1,1,1))
+	Player() : Entity(Stats(50, 5, 5, 5), Stats(1,1,1,1))
 	{
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Headbutt", PickSingle, &(aps.damageAP), 1.f, -2.f)));
+		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Headbutt", PickSingle, &(aps.damageAP), 2.f, -2.f)));
 
+		/*
 		unlock(Gaia);
 		unlock(Gaia);
 		unlock(Gaia);
@@ -465,7 +533,7 @@ public:
 		unlock(Water);
 		unlock(Water);
 		unlock(Water);
-
+		*/
 
 		// WATER
 
@@ -534,13 +602,13 @@ public:
 			switch(m_shapeLevel[0])
 			{
 			case 1:
-				abilities().push_back(Ability::SharedPtr(new Ability(Water, "PressureShot", PickSingle, &(aps.damageAP), 2.f, 3)));
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "PressureShot", PickSingle, &(aps.stunAttackAP), 2.f, 3)));
 				break;
 			case 2:
 				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Tsunami", PickAll, &(aps.damageAP), 3.f)));
 				break;
 			case 3:
-				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demoleculize", PickSelf, &(aps.demolecAP))));
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demoleculize", PickSelf, &(aps.demolecAP), 1.f, 6)));
 				break;
 			}
 			break;
@@ -553,10 +621,10 @@ public:
 			switch(m_shapeLevel[1])
 			{
 			case 1:
-				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Regen", PickSelf, &(aps.healAP))));
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Regen", PickSelf, &(aps.healAP), 1.f, 6)));
 				break;
 			case 2:
-				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Spike Shield", PickSelf)));
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Mega Shell", PickSelf, &(aps.shellAP), 1.f, 6.f)));
 				break;
 			case 3:
 				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Earthquake", PickAll, &(aps.damageAP), 3.f)));
@@ -574,7 +642,7 @@ public:
 				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.burnAP), 2)));
 				break;
 			case 2:
-				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Fiery Beast", PickAll)));
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Flame Fists", PickSelf, &(aps.fistAP), 1, 6)));
 				break;
 			case 3:
 				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3)));

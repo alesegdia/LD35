@@ -32,29 +32,12 @@ void MenuScreen::update(double delta)
 		m_game->close();
 	}
 
-	if( Input::IsKeyJustPressed(ALLEGRO_KEY_SPACE) )
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
 	{
-		Assets::instance->pium->play();
-		param += delta;
-		points++;
+		m_game->setScreen(m_game->m_mapScreen);
 	}
 
 	timer += delta * 10;
-
-	if( Input::IsKeyJustPressed(ALLEGRO_KEY_P) )
-	{
-		if( Assets::instance->music->playing() )
-		{
-			m_game->setScreen(m_game->m_mapScreen);
-			Assets::instance->music->pause();
-		}
-		else
-		{
-			Assets::instance->music->resume();
-		}
-	}
-
-
 }
 
 void MenuScreen::render()
@@ -62,20 +45,12 @@ void MenuScreen::render()
 
 	m_game->m_camera2.bind();
 
-	al_clear_to_color(al_map_rgb(210,210,210));
+	al_clear_to_color(al_map_rgb(0,0,0));
 	al_set_target_bitmap(al_get_backbuffer(m_game->display()));
 
-	float sc = 5 + param * 4 * sin(timer * param);
-
-	m_game->m_camera2.scale(sc, sc);
-
-	al_draw_text(m_game->m_font, al_map_rgb(RNG::rng->nextInt(256), RNG::rng->nextInt(256), RNG::rng->nextInt(256)), 3, 2, 0, "LD35");
-
-	std::string pointstr;
-	pointstr += points;
-
-	m_game->m_camera1.bind();
-	al_draw_text(m_game->m_font, al_map_rgb(RNG::rng->nextInt(256), RNG::rng->nextInt(256), RNG::rng->nextInt(256)), 3, 54, 0, std::to_string(points).c_str());
+	al_draw_text(m_game->m_fontBig, al_map_rgb(255, 255, 255), 0, 0, 0, "Phee");
+	al_draw_text(m_game->m_fontBig, al_map_rgb(255, 255, 255), 0, 20, 0, "Strew");
+	al_draw_text(m_game->m_fontBig, al_map_rgb(255, 255, 255), 0, 40, 0, "Quest");
 
 }
 

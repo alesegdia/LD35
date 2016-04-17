@@ -53,8 +53,11 @@ public:
 	Player::SharedPtr m_player;
 
 	ALLEGRO_FONT* m_font = nullptr;
+	ALLEGRO_FONT* m_fontBig = nullptr;
 	Camera m_camera1;
 	Camera m_camera2;
+
+	int m_floor = 1;
 
 };
 

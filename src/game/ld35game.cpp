@@ -23,6 +23,7 @@ void LD35::create()
 	m_camera1.scale(GameConfig::CAMERA_SCALE, GameConfig::CAMERA_SCALE);
 	m_camera2.scale(GameConfig::CAMERA_SCALE, GameConfig::CAMERA_SCALE);
 	m_font = al_load_ttf_font("assets/dafont.ttf", 8, 0);
+	m_fontBig = al_load_ttf_font("assets/dafont.ttf", 16, 0);
 
 	m_player.reset(new Player());
 
@@ -35,7 +36,9 @@ void LD35::create()
 	m_mapScreen.reset(new MapScreen(this));
 	m_battleScreen.reset(new BattleScreen(this));
 
-	setScreen(m_battleScreen);
+	Assets::instance->battle->pause();
+
+	setScreen(m_menuScreen);
 }
 
 void LD35::dispose()
@@ -44,6 +47,7 @@ void LD35::dispose()
 	m_menuScreen.reset();
 	m_mapScreen.reset();
 	al_destroy_font(m_font);
+	al_destroy_font(m_fontBig);
 }
 
 void LD35::update(double delta)

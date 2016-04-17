@@ -91,7 +91,7 @@ public:
 		for( m_nextEnemyTurn; m_nextEnemyTurn < LayoutWidth * LayoutHeight; m_nextEnemyTurn++ )
 		{
 			Enemy::SharedPtr e = m_enemyLayout.data()[m_nextEnemyTurn];
-			if( e != nullptr )
+			if( e != nullptr && !e->isStunned() )
 			{
 				std::vector<Entity*> playerlist = { player.get() };
 				e->abilities()[0]->apply((Entity*)e.get(), playerlist);

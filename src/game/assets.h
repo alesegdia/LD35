@@ -20,7 +20,11 @@ public:
 	Assets();
 	~Assets();
 
-	AudioSample::SharedPtr pium;
+	AudioSample::SharedPtr upgradeSfx;
+	AudioSample::SharedPtr clickSfx;
+	AudioSample::SharedPtr errorSfx;
+	AudioSample::SharedPtr levelupSfx;
+
 	AudioStream::SharedPtr music;
 	AudioStream::SharedPtr battle;
 

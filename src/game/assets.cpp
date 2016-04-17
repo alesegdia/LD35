@@ -7,7 +7,6 @@ Assets* Assets::instance = nullptr;
 Assets::Assets()
 {
 	// ALLOC RESOURCES!!
-	pium.reset(new AudioSample("assets/power.ogg"));
 	music.reset(new AudioStream("assets/ingame.ogg"));
 	battle.reset(new AudioStream("assets/jefe.ogg"));
 
@@ -87,6 +86,12 @@ Assets::Assets()
 	eneAnims[2]->updateData(eneAnimsData[2]);
 	eneAnims[3]->updateData(eneAnimsData[3]);
 	eneAnims[4]->updateData(eneAnimsData[4]);
+
+	upgradeSfx.reset(new AudioSample("assets/fxupgrade.ogg"));
+	clickSfx.reset(new AudioSample("assets/fxmenu.ogg"));
+	errorSfx.reset(new AudioSample("assets/fxbad.ogg"));
+	levelupSfx.reset(new AudioSample("assets/fxlevelup.ogg"));
+
 }
 
 Assets::~Assets()

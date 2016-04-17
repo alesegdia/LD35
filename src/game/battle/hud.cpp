@@ -47,7 +47,7 @@ void PlayerHud::render()
 
 	// draw player health bar
 	al_draw_filled_rectangle(3, 46, 77, 48, al_map_rgb(102, 57, 49));
-	al_draw_filled_rectangle(3, 46, m_player->lifePercentage() * 77.f, 48, al_map_rgb(223, 113, 38));
+	al_draw_filled_rectangle(3, 46, 3 + m_player->lifePercentage() * (77.f - 3.f), 48, al_map_rgb(223, 113, 38));
 
 }
 
@@ -127,7 +127,7 @@ Ability::SharedPtr PlayerHud::getSelected()
 	return m_player->abilities()[m_selected];
 }
 
-EnemyHud::EnemyHud() : m_enemyLayout(LayoutWidth, LayoutHeight, nullptr)
+EnemyHud::EnemyHud(Entity *player) : m_player(player), m_enemyLayout(LayoutWidth, LayoutHeight, nullptr)
 {
 
 }
@@ -293,6 +293,9 @@ std::vector<Entity *> EnemyHud::getSelecteds(Ability::SharedPtr ability)
 	default:
 	case PickSingle:
 		if( enemy != nullptr ) enemies_selected.push_back(enemy.get());
+		break;
+	case PickSelf:
+		enemies_selected.push_back(m_player);
 		break;
 	}
 	return enemies_selected;

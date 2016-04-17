@@ -69,7 +69,7 @@ public:
 	static constexpr int LayoutWidth = 3;
 	static constexpr int LayoutHeight = 2;
 
-	EnemyHud();
+	EnemyHud(Entity* player);
 
 	void render();
 	HudReturn update();
@@ -86,7 +86,7 @@ public:
 
 	void setHover(bool hover);
 
-	bool enemyTurn( Player::SharedPtr player, float& damage )
+	bool enemyTurn( Player::SharedPtr player, float& damage, std::stack<std::string>& notifstack )
 	{
 		for( m_nextEnemyTurn; m_nextEnemyTurn < LayoutWidth * LayoutHeight; m_nextEnemyTurn++ )
 		{
@@ -95,6 +95,7 @@ public:
 			{
 				std::vector<Entity*> playerlist = { player.get() };
 				e->abilities()[0]->apply((Entity*)e.get(), playerlist);
+				e->stepStatusEffects(notifstack);
 				m_nextEnemyTurn++;
 				break;
 			}
@@ -138,6 +139,8 @@ private:
 	int m_nextEnemyTurn = 0;
 
 	bool m_hover = false;
+
+	Entity* m_player = nullptr;
 
 };
 

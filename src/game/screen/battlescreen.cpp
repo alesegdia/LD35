@@ -6,7 +6,8 @@
 
 BattleScreen::BattleScreen(LD35 *g)
 	: m_game(g),
-	  m_hud(m_game->m_player, m_game->m_font)
+	  m_hud(m_game->m_player, m_game->m_font),
+	  m_enemyHud(m_game->m_player.get())
 {
 
 }
@@ -23,6 +24,21 @@ void BattleScreen::show()
 	Enemy::SharedPtr e = EntityFactory::makeDummyEnemy();
 	partyExperience += e->computeExp();
 	m_enemyHud.set(e, 0, 0);
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 1, 1);
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 2, 0);
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 0, 1);
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 1, 0);
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 2, 1);
 
 	/*
 	e = EntityFactory::makeDummyEnemy();
@@ -43,7 +59,30 @@ void BattleScreen::show()
 
 void BattleScreen::update(double delta)
 {
-	if( m_battleStatus == EndBattle )
+	if( m_battleStatus == InfoTurn )
+	{
+		if( m_infoForNotif )
+		{
+			notifs.pop();
+			m_infoForNotif = false;
+		}
+		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
+		{
+			m_battleStatus = m_storedStatus;
+		}
+	}
+	else if( !notifs.empty() )
+	{
+		m_storedStatus = m_battleStatus;
+		message(m_storedStatus, notifs.top());
+		m_infoForNotif = true;
+		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
+		{
+			std::cout << "MEH!";
+			notifs.pop();
+		}
+	}
+	else if( m_battleStatus == EndBattle )
 	{
 		m_game->setScreen(m_game->m_mapScreen);
 	}
@@ -56,7 +95,7 @@ void BattleScreen::update(double delta)
 			std::string str = "WIN! +";
 			str += std::to_string(exp);
 			str += " exp";
-			message(str.c_str(), EndBattle);
+			message(EndBattle, str);
 		}
 		m_enemyHud.setHover(false);
 		if( m_hudState == ChooseAbility )
@@ -94,26 +133,19 @@ void BattleScreen::update(double delta)
 		float damage = 0;
 		m_enemyHud.checkAlive();
 
-		if( m_enemyHud.enemyTurn( m_game->m_player, damage ) )
+		if( m_enemyHud.enemyTurn( m_game->m_player, damage, notifs ) )
 		{
-			message("Wow, that hurts!", PlayerTurn);
-
+			message(PlayerTurn, "Wow, that hurts!");
 			m_battleStatus = PlayerTurn;
 			m_game->m_player->turn();
+			m_game->m_player->stepStatusEffects(notifs);
 		}
 		else
 		{
-			message("Wow, that hurts!", EnemyTurn);
+			message(EnemyTurn, "Wow, that hurts!");
 		}
 		m_enemyHud.checkAlive();
 
-	}
-	else if( m_battleStatus == InfoTurn )
-	{
-		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
-		{
-			m_battleStatus = m_storedStatus;
-		}
 	}
 }
 
@@ -131,7 +163,7 @@ void BattleScreen::render()
 	{
 		// draw base gui color
 		al_draw_filled_rectangle(0, 50, 80, 80, m_game->m_player->shapeColor());
-		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, 50, 0, m_infomsg.c_str());
+		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, 50, 0, m_infomsg1.c_str());
 	}
 }
 

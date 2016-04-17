@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stack>
+
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 
@@ -50,9 +52,11 @@ public:
 		m_lastx = m_lasty = 0;
 	}
 
-	void message( const char* txt, BattleStatus returningStatus )
+	void message( BattleStatus returningStatus, std::string txt1, std::string txt2 = "", std::string txt3 = ""  )
 	{
-		m_infomsg = txt;
+		m_infomsg1 = txt1;
+		m_infomsg2 = txt2;
+		m_infomsg3 = txt3;
 		m_battleStatus = InfoTurn;
 		m_storedStatus = returningStatus;
 	}
@@ -70,9 +74,14 @@ private:
 	EnemyHud m_enemyHud;
 	HudState m_hudState = ChooseAbility;
 	BattleStatus m_battleStatus = PlayerTurn;
-	std::string m_infomsg;
+	std::string m_infomsg1;
+	std::string m_infomsg2;
+	std::string m_infomsg3;
 	BattleStatus m_storedStatus;
 	int partyExperience = 0;
+
+	std::stack<std::string> notifs;
+	bool m_infoForNotif = false;
 
 	int m_lastx, m_lasty;
 

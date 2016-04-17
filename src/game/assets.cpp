@@ -15,7 +15,6 @@ Assets::Assets()
 	tilesetSheet8.reset(new Spritesheet(10, 12, tileset));
 
 	player = al_load_bitmap("assets/playersheet.png");
-	std::cout << player << std::endl;
 	playerSheet.reset(new Spritesheet(6, 12, player));
 
 	playerStandU.reset(new Animation(0.1f, 1));

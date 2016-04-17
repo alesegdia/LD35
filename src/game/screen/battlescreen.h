@@ -74,18 +74,23 @@ public:
 		Enemy::SharedPtr e = EntityFactory::makeDummyEnemy(0);
 		partyExperience += e->computeExp();
 		m_enemyHud.set(e, 0, 0);
+
 		e = EntityFactory::makeDummyEnemy(0);
 		partyExperience += e->computeExp();
 		m_enemyHud.set(e, 1, 1);
+
 		e = EntityFactory::makeDummyEnemy(1);
 		partyExperience += e->computeExp();
 		m_enemyHud.set(e, 2, 0);
+
 		e = EntityFactory::makeDummyEnemy(2);
 		partyExperience += e->computeExp();
 		m_enemyHud.set(e, 0, 1);
+
 		e = EntityFactory::makeDummyEnemy(3);
 		partyExperience += e->computeExp();
 		m_enemyHud.set(e, 1, 0);
+
 		e = EntityFactory::makeDummyEnemy(4);
 		partyExperience += e->computeExp();
 		m_enemyHud.set(e, 2, 1);

@@ -27,7 +27,7 @@ void BattleScreen::show()
 	m_enemyHud.clear();
 
 	//makeDummyParty();
-	makePartyForFloor(1);
+	makePartyForFloor(m_game->m_floor);
 
 
 	/*

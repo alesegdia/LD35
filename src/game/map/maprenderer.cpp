@@ -8,11 +8,16 @@ MapRenderer::MapRenderer(Matrix2Di::SharedPtr map)
 
 void MapRenderer::render()
 {
-	for( int x = 0; x < m_map->cols(); x++ )
+	int ext = 3;
+	for( int x = m_center.x() - ext; x < m_center.x() + ext + 1; x++ )
 	{
-		for( int y = 0; y < m_map->rows(); y++ )
+		for( int y = m_center.y() - ext; y < m_center.y() + ext + 1; y++ )
 		{
-			renderCell( x, y, m_map->get(x, y) );
+			if( x >= 0 && x < m_map->cols() &&
+				y >= 0 && y < m_map->rows())
+			{
+				renderCell( x, y, m_map->get(x, y) );
+			}
 		}
 	}
 }

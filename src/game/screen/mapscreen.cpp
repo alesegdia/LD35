@@ -35,6 +35,7 @@ void MapScreen::show()
 
 void MapScreen::update(double delta)
 {
+	m_mapRenderer->center(m_player->tile().x(), m_player->tile().y());
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F5) ) m_game->advanceFloor();
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F6) ) m_game->endGame();
 
@@ -106,7 +107,6 @@ void MapScreen::update(double delta)
 			{
 				infoMessage("Feeling light!", "You learnt a new", "water ability!", "");
 			}
-
 		}
 	}
 }

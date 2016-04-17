@@ -6,6 +6,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <alligator/util/matrix.h>
+#include <alligator/util/math.h>
 
 class MapRenderer
 {
@@ -14,12 +15,18 @@ public:
 
 	MapRenderer(Matrix2Di::SharedPtr map);
 
+	virtual void center(float x, float y)
+	{
+		m_center.set(x, y);
+	}
+
 	void render();
 
 	virtual void renderCell( int x, int y, int cell_value ) = 0 ;
 
 private:
 	Matrix2Di::SharedPtr m_map;
+	Vec2f m_center;
 
 };
 

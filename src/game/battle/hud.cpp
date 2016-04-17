@@ -21,13 +21,16 @@ void PlayerHud::render()
 		{
 			al_draw_bitmap(Assets::instance->cursorRight, -10, 46 + (i - m_top) * 10, 0);
 		}
-		if( m_player->abilities()[i]->canUse() )
+		if( m_player->abilities().size() > i )
 		{
-			al_draw_text(m_font, al_map_rgb(255, 255, 255), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
-		}
-		else
-		{
-			al_draw_text(m_font, al_map_rgb(192, 192, 192), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
+			if( m_player->abilities()[i]->canUse() )
+			{
+				al_draw_text(m_font, al_map_rgb(255, 255, 255), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
+			}
+			else
+			{
+				al_draw_text(m_font, al_map_rgb(192, 192, 192), 10, 50 + (i - m_top) * 10, 0, m_player->abilities()[i]->text());
+			}
 		}
 	}
 

@@ -57,6 +57,13 @@ public:
 		m_storedStatus = returningStatus;
 	}
 
+	int consumeExperience()
+	{
+		int ret = partyExperience;
+		partyExperience = 0;
+		return ret;
+	}
+
 private:
 	LD35* m_game;
 	PlayerHud m_hud;
@@ -65,6 +72,7 @@ private:
 	BattleStatus m_battleStatus = PlayerTurn;
 	std::string m_infomsg;
 	BattleStatus m_storedStatus;
+	int partyExperience = 0;
 
 	int m_lastx, m_lasty;
 

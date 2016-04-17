@@ -19,10 +19,25 @@ BattleScreen::~BattleScreen()
 void BattleScreen::show()
 {
 	m_enemyHud.clear();
-	m_enemyHud.set(EntityFactory::makeDummyEnemy(), 0, 0);
-	m_enemyHud.set(EntityFactory::makeDummyEnemy(), 0, 1);
-	m_enemyHud.set(EntityFactory::makeDummyEnemy(), 1, 0);
-	m_enemyHud.set(EntityFactory::makeDummyEnemy(), 2, 1);
+
+	Enemy::SharedPtr e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 0, 0);
+
+	/*
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 0, 1);
+
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 2, 1);
+
+	e = EntityFactory::makeDummyEnemy();
+	partyExperience += e->computeExp();
+	m_enemyHud.set(e, 1, 1);
+	*/
+
 	m_battleStatus = PlayerTurn;
 }
 
@@ -36,7 +51,12 @@ void BattleScreen::update(double delta)
 	{
 		if( m_enemyHud.numEnemies() <= 0 )
 		{
-			message("WIN!", EndBattle);
+			int exp = consumeExperience();
+			m_game->m_player->addExp(exp);
+			std::string str = "WIN! +";
+			str += std::to_string(exp);
+			str += " exp";
+			message(str.c_str(), EndBattle);
 		}
 		m_enemyHud.setHover(false);
 		if( m_hudState == ChooseAbility )

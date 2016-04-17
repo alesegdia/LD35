@@ -211,6 +211,11 @@ public:
 		return m_abilities;
 	}
 
+	int computeExp()
+	{
+		return m_stats.agi + m_stats.atk + m_stats.def + m_stats.hp / 2;
+	}
+
 private:
 	std::vector<Ability::SharedPtr> m_abilities;
 
@@ -235,6 +240,15 @@ public:
 	}
 };
 
+struct LevelingNotification
+{
+	bool isPresent = false;
+	std::string text1;
+	std::string text2;
+	std::string text3;
+	std::string text4;
+};
+
 class Player : public Entity
 {
 private:
@@ -244,22 +258,13 @@ public:
 
 	Player() : Entity(Stats(10, 5, 5, 5), Stats(1,1,1,1))
 	{
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Headbutt", PickSingle, &(aps.damageAP), 1.f)));
+		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Headbutt", PickSingle, &(aps.damageAP), 1.f, -2.f)));
 
 		// WATER
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "PressureShot", PickSingle, &(aps.damageAP), 2.f, 3)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Tsunami", PickAll, &(aps.damageAP), 3.f)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demoleculize", PickSelf)));
 
 		// GAIA
-		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Regen", PickSelf)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Spike Shield", PickSelf)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Earthquake", PickAll, &(aps.damageAP), 3.f)));
 
 		// FIRE
-		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.damageAP), 2)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Fiery Beast", PickAll)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3)));
 	}
 
 	void turn()
@@ -311,6 +316,65 @@ public:
 		}
 	}
 
+	void unlock(ShapeType st)
+	{
+
+		switch( st )
+		{
+		case Water:
+			m_shapeLevel[0]++;
+			switch(m_shapeLevel[0])
+			{
+			case 1:
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "PressureShot", PickSingle, &(aps.damageAP), 2.f, 3)));
+				break;
+			case 2:
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Tsunami", PickAll, &(aps.damageAP), 3.f)));
+				break;
+			case 3:
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demoleculize", PickSelf)));
+				break;
+			}
+			break;
+		case Gaia:
+
+
+
+
+			m_shapeLevel[1]++;
+			switch(m_shapeLevel[1])
+			{
+			case 1:
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Regen", PickSelf)));
+				break;
+			case 2:
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Spike Shield", PickSelf)));
+				break;
+			case 3:
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Earthquake", PickAll, &(aps.damageAP), 3.f)));
+				break;
+			}
+			break;
+		case Fire:
+
+
+
+			m_shapeLevel[2]++;
+			switch(m_shapeLevel[2])
+			{
+			case 1:
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.damageAP), 2)));
+				break;
+			case 2:
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Fiery Beast", PickAll)));
+				break;
+			case 3:
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3)));
+				break;
+			}
+			break;
+		}
+	}
 
 	ShapeType shapeType()
 	{
@@ -322,8 +386,67 @@ public:
 		return m_abilities;
 	}
 
+	static constexpr int LevelExp = 100;
+
+	LevelingNotification levelingNotification;
+
+	void addExp( int exp )
+	{
+		m_exp += exp;
+		if( m_exp >= m_nextLevelNeededExp )
+		{
+			m_level++;
+			levelingNotification.isPresent = true;
+			levelingNotification.text1 = "Level up to " + std::to_string(m_level) + "!";
+			m_exp -= m_nextLevelNeededExp;
+			m_nextLevelNeededExp = (m_level + 1) * LevelExp;
+			switch( currentShape )
+			{
+			case Water:
+				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(3) + " agi!";
+				m_stats.agi += 3;
+				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(1) + " def!";
+				m_stats.def += 1;
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(2) + " atk!";
+				m_stats.atk += 2;
+				break;
+			case Gaia:
+				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(3) + " agi!";
+				m_stats.agi += 3;
+				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(4) + " def!";
+				m_stats.def += 4;
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(1) + " def!";
+				m_stats.atk += 1;
+				break;
+			case Fire:
+				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(2) + " agi!";
+				m_stats.agi += 2;
+				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(1) + " def!";
+				m_stats.def += 1;
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(3) + " def!";
+				m_stats.atk += 3;
+				break;
+			}
+		}
+	}
+
+	float expPercentage()
+	{
+		return (float)m_exp / (float)m_nextLevelNeededExp;
+	}
+
+	int level()
+	{
+		return m_level;
+	}
+
 private:
 	std::vector<Ability::SharedPtr> m_abilities;
 	ShapeType currentShape = Water;
+
+	int m_shapeLevel[3] = {0, 0, 0};
+	int m_exp = 0;
+	int m_nextLevelNeededExp = LevelExp;
+	int m_level = 1;
 
 };

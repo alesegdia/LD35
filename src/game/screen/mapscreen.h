@@ -29,7 +29,7 @@ public:
 
 	void map( const Matrix2Di& map );
 
-	int getTileFrontPlayer();
+	int getTileFrontPlayer(Vec2i* out = nullptr);
 
 	Matrix2Di::SharedPtr map();
 

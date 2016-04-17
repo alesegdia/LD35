@@ -5,7 +5,7 @@
 MapScreen::MapScreen(LD35 *g)
 	: m_game(g)
 {
-	nextLevel();
+	nextLevel(1);
 }
 
 MapScreen::~MapScreen()
@@ -27,6 +27,9 @@ void MapScreen::show()
 
 void MapScreen::update(double delta)
 {
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F5) ) m_game->advanceFloor();
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F6) ) m_game->endGame();
+
 	if( m_isInfo )
 	{
 		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
@@ -36,7 +39,7 @@ void MapScreen::update(double delta)
 			int front_tile = getTileFrontPlayer(&front_tile_coords);
 			if( front_tile == 2 )
 			{
-				nextLevel();
+				m_game->advanceFloor();
 			}
 			// RED TILE
 			else if( front_tile == 3 )
@@ -199,9 +202,9 @@ Vec2i MapScreen::randomFreeTile()
 	return ret;
 }
 
-void MapScreen::nextLevel()
+void MapScreen::nextLevel(int level)
 {
-	map(RandomWalkerGenerator().generate(30, 30));
+	map(RandomWalkerGenerator().generate(10 * level, 10 * level));
 
 	std::vector<ALLEGRO_BITMAP*> tiles;
 	tiles.push_back(Assets::instance->tilesetSheet->getFrame(1, 0));

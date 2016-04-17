@@ -9,6 +9,7 @@
 #include <alligator/input/input.h>
 #include <alligator/camera/camera.h>
 #include <alligator/util/matrix.h>
+#include <alligator/util/rng.h>
 
 #include "../battle/entity.h"
 #include "../battle/hud.h"
@@ -66,6 +67,45 @@ public:
 		int ret = partyExperience;
 		partyExperience = 0;
 		return ret;
+	}
+
+	void makeDummyParty()
+	{
+		Enemy::SharedPtr e = EntityFactory::makeDummyEnemy(0);
+		partyExperience += e->computeExp();
+		m_enemyHud.set(e, 0, 0);
+		e = EntityFactory::makeDummyEnemy(0);
+		partyExperience += e->computeExp();
+		m_enemyHud.set(e, 1, 1);
+		e = EntityFactory::makeDummyEnemy(1);
+		partyExperience += e->computeExp();
+		m_enemyHud.set(e, 2, 0);
+		e = EntityFactory::makeDummyEnemy(2);
+		partyExperience += e->computeExp();
+		m_enemyHud.set(e, 0, 1);
+		e = EntityFactory::makeDummyEnemy(3);
+		partyExperience += e->computeExp();
+		m_enemyHud.set(e, 1, 0);
+		e = EntityFactory::makeDummyEnemy(4);
+		partyExperience += e->computeExp();
+		m_enemyHud.set(e, 2, 1);
+	}
+
+	void makePartyForFloor( int f )
+	{
+		std::list<Enemy::SharedPtr> generated;
+		int r = RNG::rng->nextInt(f+1) + 1;
+
+		partyExperience = 0;
+
+		while( r > 0 && generated.size() < 6)
+		{
+			Enemy::SharedPtr e = EntityFactory::makeEnemyStats(RNG::rng->nextInt(4), f * 5);
+			partyExperience += e->computeExp();
+			m_enemyHud.add(e);
+			r--;
+			generated.push_back(e);
+		}
 	}
 
 private:

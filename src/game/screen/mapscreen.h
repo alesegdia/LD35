@@ -46,7 +46,7 @@ public:
 		m_isInfo = true;
 	}
 
-	void nextLevel();
+	void nextLevel(int level);
 
 private:
 	LD35* m_game;

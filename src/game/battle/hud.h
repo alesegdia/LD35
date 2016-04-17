@@ -109,6 +109,36 @@ public:
 		return false;
 	}
 
+	void add( Enemy::SharedPtr e )
+	{
+		bool dobreak = false;
+		if( m_enemyLayout.get(1, 0) == nullptr ) m_enemyLayout.set(1, 0, e);
+		else if( m_enemyLayout.get(1, 1) == nullptr ) m_enemyLayout.set(1, 1, e);
+		else if( m_enemyLayout.get(0, 0) == nullptr ) m_enemyLayout.set(0, 0, e);
+		else if( m_enemyLayout.get(2, 0) == nullptr ) m_enemyLayout.set(2, 0, e);
+		else if( m_enemyLayout.get(0, 1) == nullptr ) m_enemyLayout.set(0, 1, e);
+		else if( m_enemyLayout.get(2, 1) == nullptr ) m_enemyLayout.set(2, 1, e);
+
+		/*
+		for( int x = 0; x < m_enemyLayout.cols(); x++ )
+		{
+			for( int y = 0; y < m_enemyLayout.rows(); y++ )
+			{
+				if( m_enemyLayout.get(x, y) == nullptr )
+				{
+					set(e, x, y);
+					dobreak = true;
+					break;
+				}
+			}
+			if( dobreak )
+			{
+				break;
+			}
+		}
+		*/
+	}
+
 	int numEnemies()
 	{
 		int i = 0;

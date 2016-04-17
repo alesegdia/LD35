@@ -21,24 +21,9 @@ void BattleScreen::show()
 {
 	m_enemyHud.clear();
 
-	Enemy::SharedPtr e = EntityFactory::makeDummyEnemy();
-	partyExperience += e->computeExp();
-	m_enemyHud.set(e, 0, 0);
-	e = EntityFactory::makeDummyEnemy();
-	partyExperience += e->computeExp();
-	m_enemyHud.set(e, 1, 1);
-	e = EntityFactory::makeDummyEnemy();
-	partyExperience += e->computeExp();
-	m_enemyHud.set(e, 2, 0);
-	e = EntityFactory::makeDummyEnemy();
-	partyExperience += e->computeExp();
-	m_enemyHud.set(e, 0, 1);
-	e = EntityFactory::makeDummyEnemy();
-	partyExperience += e->computeExp();
-	m_enemyHud.set(e, 1, 0);
-	e = EntityFactory::makeDummyEnemy();
-	partyExperience += e->computeExp();
-	m_enemyHud.set(e, 2, 1);
+	//makeDummyParty();
+	makePartyForFloor(1);
+
 
 	/*
 	e = EntityFactory::makeDummyEnemy();

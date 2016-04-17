@@ -26,6 +26,25 @@ public:
 	void dispose() override ;
 	void update(double delta) override ;
 
+	void endGame()
+	{
+		resetPlayer();
+		m_floor = 1;
+		setScreen(m_menuScreen);
+		m_mapScreen->nextLevel(m_floor);
+	}
+
+	void advanceFloor()
+	{
+		m_floor++;
+		m_mapScreen->nextLevel(m_floor);
+	}
+
+	void resetPlayer()
+	{
+		m_player.reset(new Player);
+	}
+
 	// all screens
 	std::shared_ptr<MenuScreen> m_menuScreen;
 	std::shared_ptr<MapScreen> m_mapScreen;

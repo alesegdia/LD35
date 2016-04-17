@@ -22,6 +22,7 @@ public:
 
 	AudioSample::SharedPtr pium;
 	AudioStream::SharedPtr music;
+	AudioStream::SharedPtr battle;
 
 	ALLEGRO_BITMAP* tileset;
 	ALLEGRO_BITMAP* player;
@@ -46,6 +47,33 @@ public:
 	ALLEGRO_BITMAP* cursorRight;
 
 	ALLEGRO_BITMAP* enemyPlaceholder;
+
+	ALLEGRO_BITMAP* ene1;
+	ALLEGRO_BITMAP* ene2;
+	ALLEGRO_BITMAP* ene3;
+	ALLEGRO_BITMAP* ene4;
+	ALLEGRO_BITMAP* ene5;
+
+	Spritesheet::SharedPtr ene1SH;
+	Spritesheet::SharedPtr ene2SH;
+	Spritesheet::SharedPtr ene3SH;
+	Spritesheet::SharedPtr ene4SH;
+	Spritesheet::SharedPtr ene5SH;
+
+	Animation::SharedPtr eneAnims[5];
+
+	AnimationData eneAnimsData[5];
+
+
+	void Update(double delta)
+	{
+		for( int i = 0; i < 5; i++ )
+		{
+			eneAnimsData[i].timer += delta;
+			eneAnims[i]->updateData(eneAnimsData[i]);
+		}
+	}
+
 
 
 };

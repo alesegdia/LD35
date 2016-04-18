@@ -67,9 +67,17 @@ public:
 
 	void decreaseHP( float qtt )
 	{
-		std::cout << "qtt" << m_currentHP << std::endl;
 		m_currentHP -= qtt;
 		m_currentHP = std::max(0.f, m_currentHP);
+	}
+
+	void healHP( float qtt )
+	{
+		m_currentHP += qtt;
+		if( m_currentHP > m_stats.hp )
+		{
+			m_currentHP = m_stats.hp;
+		}
 	}
 
 	Vec2i position;
@@ -81,7 +89,7 @@ public:
 		switch( seff->type )
 		{
 		case Healing:
-			m_currentHP += seff->value;
+			healHP(seff->value);
 			notifstack.push("Yo healin dawg!");
 			break;
 		case Burnt:
@@ -146,12 +154,6 @@ public:
 		{
 			status.erase(std::remove(status.begin(), status.end(), se), status.end());
 		}
-	}
-
-	void healHP( float qtt )
-	{
-		m_currentHP += qtt;
-		m_currentHP = std::min(m_stats.hp, m_currentHP);
 	}
 
 	float currentHP()

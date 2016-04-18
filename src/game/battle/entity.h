@@ -309,12 +309,7 @@ public:
 		else
 		{
 			float thresh = tgtagi - srcagi;
-			std::cout << "target: " << tgtagi << std::endl;
-			std::cout << "src: " << srcagi << std::endl;
-			std::cout << "diff: " << thresh << std::endl;
-			int r = RNG::rng->nextInt(30);
-			std::cout << "random: " << r << std::endl;
-			std::cout << "========" << std::endl;
+			int r = RNG::rng->nextInt(100);
 			return thresh > r;
 		}
 	}
@@ -326,12 +321,7 @@ public:
 		if( srcagi > tgtagi )
 		{
 			float thresh = srcagi - tgtagi;
-			std::cout << "target: " << tgtagi << std::endl;
-			std::cout << "src: " << srcagi << std::endl;
-			std::cout << "diff: " << thresh << std::endl;
 			int r = RNG::rng->nextInt(30);
-			std::cout << "random: " << r << std::endl;
-			std::cout << "========" << std::endl;
 			return thresh > r;
 		}
 		else
@@ -359,7 +349,6 @@ public:
 					if( decideCrit )
 					{
 						dmg *= 1.5f;
-						std::cout << "didcrit" << std::endl;
 						ret = 2;
 					}
 

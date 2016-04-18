@@ -74,6 +74,8 @@ private:
 
 	bool m_checkAbis = false;
 
+	Matrix2Di::SharedPtr visible;
+
 
 };
 

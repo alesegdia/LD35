@@ -38,6 +38,13 @@ void MapScreen::show()
 void MapScreen::update(double delta)
 {
 
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_TAB) )
+	{
+		m_game->m_minimapScreen->config( m_mapRenderer->getVisible(), m_map, m_player->tile() );
+		Matrix2DDebug<int>() << *(m_mapRenderer->getVisible());
+		m_game->setScreen(m_game->m_minimapScreen);
+	}
+
 	m_mapRenderer->center(m_player->tile().x(), m_player->tile().y());
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F5) ) m_game->advanceFloor();
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F6) ) m_game->endGame();
@@ -173,6 +180,9 @@ void MapScreen::map(const Matrix2Di &map)
 	{
 		*m_map = map;
 	}
+
+	visible.reset(new Matrix2Di(map.cols(), map.rows(), 0));
+
 	m_freeTiles.clear();
 
 	for( int x = 0; x < m_map->cols(); x++ )
@@ -267,7 +277,8 @@ Vec2i MapScreen::randomFreeTile()
 
 void MapScreen::nextLevel(int level)
 {
-	map(RandomWalkerGenerator().generate(10 * level, 10 * level));
+	static constexpr int n = 10;
+	map(RandomWalkerGenerator().generate(n * level, n * level));
 
 	std::vector<ALLEGRO_BITMAP*> tiles;
 	tiles.push_back(Assets::instance->tilesetSheet->getFrame(1, 0));

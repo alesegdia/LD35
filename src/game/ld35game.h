@@ -14,6 +14,7 @@
 #include "screen/battlescreen.h"
 #include "screen/losescreen.h"
 #include "screen/midfloorscreen.h"
+#include "screen/winscreen.h"
 
 #include "battle/entity.h"
 
@@ -54,6 +55,7 @@ public:
 	std::shared_ptr<BattleScreen> m_battleScreen;
 	std::shared_ptr<LoseScreen> m_loseScreen;
 	std::shared_ptr<MidFloorScreen> m_midFloorScreen;
+	std::shared_ptr<MiniMapScreen> m_minimapScreen;
 
 	Player::SharedPtr m_player;
 
@@ -61,6 +63,7 @@ public:
 	ALLEGRO_FONT* m_fontBig = nullptr;
 	Camera m_camera1;
 	Camera m_camera2;
+	Camera m_camera3;
 
 	int m_floor = 1;
 

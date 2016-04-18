@@ -6,7 +6,7 @@
 #include "gameconfig.h"
 
 LD35::LD35(int sw, int sh)
-	: Game( sw, sh ), m_camera1(Vec2f(sw, sh)), m_camera2(Vec2f(sw, sh))
+	: Game( sw, sh ), m_camera1(Vec2f(sw, sh)), m_camera2(Vec2f(sw, sh)), m_camera3(Vec2f(sw, sh))
 {
 
 }
@@ -22,6 +22,7 @@ void LD35::create()
 
 	m_camera1.scale(GameConfig::CAMERA_SCALE, GameConfig::CAMERA_SCALE);
 	m_camera2.scale(GameConfig::CAMERA_SCALE, GameConfig::CAMERA_SCALE);
+	m_camera3.scale(GameConfig::CAMERA_SCALE, GameConfig::CAMERA_SCALE);
 	m_font = al_load_ttf_font("assets/dafont.ttf", 8, 0);
 	m_fontBig = al_load_ttf_font("assets/dafont.ttf", 16, 0);
 
@@ -37,6 +38,7 @@ void LD35::create()
 	m_battleScreen.reset(new BattleScreen(this));
 	m_loseScreen.reset(new LoseScreen(this));
 	m_midFloorScreen.reset(new MidFloorScreen(this));
+	m_minimapScreen.reset(new MiniMapScreen(this));
 
 	Assets::instance->battle->pause();
 
@@ -54,10 +56,6 @@ void LD35::dispose()
 
 void LD35::update(double delta)
 {
-	if( Input::IsKeyDown(ALLEGRO_KEY_ESCAPE) )
-	{
-		close();
-	}
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F1) )
 	{
@@ -72,6 +70,11 @@ void LD35::update(double delta)
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F3) )
 	{
 		setScreen(m_battleScreen);
+	}
+
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_ESCAPE) )
+	{
+		close();
 	}
 
 	Game::update(delta);

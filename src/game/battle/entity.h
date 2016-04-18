@@ -464,6 +464,9 @@ public:
 	StatusEffect burning;
 	OnlyStatusEffectAbilityApplicator burnAP;
 
+	StatusEffect burning2;
+	OnlyStatusEffectAbilityApplicator burnAP2;
+
 	StatusEffect healing;
 	OnlyStatusEffectAbilityApplicator healAP;
 
@@ -478,11 +481,17 @@ public:
 
 	AbilityApplicators()
 	{
-		burning.turnsLeft = 3;
+		burning.turnsLeft = 4;
 		burning.type = Burnt;
 		burning.value = 0; // IGNORED BECAUSE IT'S A MODEL
 		//burnAP.setModel(&burning);
 		burnAP.setup(false, &burning, ATK, 0.5f);
+
+		burning2.turnsLeft = 3;
+		burning2.type = Burnt;
+		burning2.value = 0; // IGNORED BECAUSE IT'S A MODEL
+		//burnAP.setModel(&burning);
+		burnAP2.setup(false, &burning, ATK, 0.2f);
 
 		healing.turnsLeft = 4;
 		healing.type = Healing;
@@ -585,11 +594,14 @@ public:
 
 	Player() : Entity(Stats(50, 5, 5, 5), Stats(1,1,1,1))
 	{
-		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Headbutt", PickSingle, &(aps.damageAP), 2.f, -2.f)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Chaos Fart", Pick2x2Block, &(aps.damageAP), 1.f, -2.f)));
-		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Shard", PickAll, &(aps.stunAttackAP), 0.5f, -2.f)));
+		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Gob", PickSingle, &(aps.damageAP), 2.f, -2.f,
+															 "Low damage.", "Get saliva", "and SHOT!!")));
+		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Chaos Fart", Pick2x2Block, &(aps.damageAP), 1.f, -2.f,
+															 "Low damage,", "all enemies.", "Nothing like", "good ol' farts.")));
+		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Shard", Pick2x2Block, &(aps.stunAttackAP), 0.5f, 2.f,
+															 "Stun block", "of enemies.", "Throw one rock,", "enjoy all day.")));
 
-
+		/*
 		unlock(Gaia);
 		unlock(Gaia);
 		unlock(Gaia);
@@ -601,6 +613,7 @@ public:
 		unlock(Water);
 		unlock(Water);
 		unlock(Water);
+		*/
 
 		// WATER
 
@@ -642,7 +655,7 @@ public:
 		case Gaia:
 			m_shapeModStats.agi = 1.0f;
 			m_shapeModStats.atk = 0.5f;
-			m_shapeModStats.def = 1.0f;
+			m_shapeModStats.def = 1.5f;
 			break;
 		}
 	}
@@ -672,12 +685,16 @@ public:
 																	 "Stunts,", "single target,", "high damage.", "-GroggyF")));
 				break;
 			case 2:
-				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Tsunami", PickAll, &(aps.damageAP), 3.f, 1.f,
-																	 "All enemies.", "High damage.", "Watersome,", "Rekt.")));
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Tsunami", Pick2x2Block, &(aps.damageAP), 2.f, 3.f,
+																	 "All enemies.", "Mid damage.", "Watersome,", "Rekt.")));
 				break;
 			case 3:
-				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demoleculize", PickSelf, &(aps.demolecAP), 1.f, 6,
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demolecularize", PickSelf, &(aps.demolecAP), 1.f, 6,
 																	 "Agi +200%!!", "You fade", "beyond your", "oponents, dawg")));
+				break;
+			case 4:
+				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Mare Nostrum", PickAll, &(aps.damageAP), 5.f, 6,
+																	 "All enemies.", "High damage.", "Watersome,", "Rekt.")));
 				break;
 			}
 			break;
@@ -698,8 +715,11 @@ public:
 																	 "Def +200%!!", "Defend like", "a boss, dawg.", "#NO_DWG_WO_SHLL")));
 				break;
 			case 3:
-				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Earthquake", PickAll, &(aps.damageAP), 3.f, 1.f,
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Earthquake", Pick2x2Block, &(aps.damageAP), 3.f, 4.f,
 																	 "All enemies.", "High damage.", "Did someone fart?")));
+			case 4:
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Meteor", PickAll, &(aps.damageAP), 3.f, 1.f,
+																	 "High damage", "single enemy.", "Zurians meteor", "in your face.")));
 				break;
 			}
 			break;
@@ -711,14 +731,19 @@ public:
 			switch(m_shapeLevel[2])
 			{
 			case 1:
-				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.burnAP), 2, 1.f,
-																	 "Affects block", "of enemies.", "Provokes burn.", "Fire dawg!")));
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Torch", PickSingle, &(aps.burnAP2), 0.5f, 1.f,
+																	 "Affects block", "of enemies.", "Provokes burn.", "Stack it, dawg!")));
 				break;
 			case 2:
 				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Flame Fists", PickSelf, &(aps.fistAP), 1, 6)));
 				break;
 			case 3:
-				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3)));
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.burnAP), 2, 6.f,
+																	 "Affects block", "of enemies.", "Provokes burn.", "EVEN FIRER!!")));
+				break;
+			case 4:
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3, 8.f,
+																	 "High damage", "all enemies", "Yes, you read", "well.")));
 				break;
 			}
 			break;

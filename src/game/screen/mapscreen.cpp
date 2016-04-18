@@ -3,7 +3,8 @@
 #include "../assets.h"
 
 MapScreen::MapScreen(LD35 *g)
-	: m_game(g)
+	: m_game(g),
+	  m_hud(m_game->m_player, m_game->m_font)
 {
 	nextLevel(1);
 }
@@ -31,10 +32,12 @@ void MapScreen::show()
 		Assets::instance->levelupSfx->play();
 		m_game->m_player->levelingNotification.isPresent = false;
 	}
+	m_justEntered = true;
 }
 
 void MapScreen::update(double delta)
 {
+
 	m_mapRenderer->center(m_player->tile().x(), m_player->tile().y());
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F5) ) m_game->advanceFloor();
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F6) ) m_game->endGame();
@@ -48,7 +51,8 @@ void MapScreen::update(double delta)
 			int front_tile = getTileFrontPlayer(&front_tile_coords);
 			if( front_tile == 2 )
 			{
-				m_game->advanceFloor();
+				//m_game->advanceFloor();
+				m_game->setScreen(m_game->m_midFloorScreen);
 			}
 			// RED TILE
 			else if( front_tile == 3 )
@@ -68,7 +72,6 @@ void MapScreen::update(double delta)
 				m_game->m_player->unlock(Water);
 				m_map->set(front_tile_coords.x(), front_tile_coords.y(), 0);
 			}
-
 		}
 		if( Input::IsKeyJustPressed(ALLEGRO_KEY_BACKSPACE) )
 		{
@@ -77,38 +80,81 @@ void MapScreen::update(double delta)
 	}
 	else
 	{
-		m_player->update(delta);
-		if( m_player->tile() != m_prevPlayerPos )
+		if( !m_checkAbis )
 		{
-			// try new battle!
-			int r = RNG::rng->nextInt(30);
-			if( r < 1 )
+			m_player->update(delta);
+			if( m_player->tile() != m_prevPlayerPos && !m_justEntered )
 			{
-				m_game->setScreen(m_game->m_battleScreen);
+				// try new battle!
+				int r = RNG::rng->nextInt(30);
+				if( r < 3 )
+				{
+					m_game->setScreen(m_game->m_battleScreen);
+				}
 			}
-		}
-		m_prevPlayerPos = m_player->tile();
-		scroll(m_player->position(), m_game->m_camera1);
-		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
-		{
-			if( getTileFrontPlayer() == 2 )
+			m_justEntered = false;
+
+			m_prevPlayerPos = m_player->tile();
+			scroll(m_player->position(), m_game->m_camera1);
+			if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
 			{
-				infoMessage("ENTER: next floor", "BACK: cancel", "yo dawg", "that was ez");
-			}
-			else if( getTileFrontPlayer() == 3 )
-			{
-				infoMessage("Your skin burns!", "You learnt a new", "fire ability!", "");
-			}
-			else if( getTileFrontPlayer() == 4 )
-			{
-				infoMessage("You shine!", "You learnt a new", "gaia ability!", "");
-			}
-			else if( getTileFrontPlayer() == 5 )
-			{
-				infoMessage("Feeling light!", "You learnt a new", "water ability!", "");
+				if( getTileFrontPlayer() == 2 )
+				{
+					infoMessage("ENTER: next floor", "BACK: cancel", "yo dawg", "that was ez");
+				}
+				else if( getTileFrontPlayer() == 3 )
+				{
+					infoMessage("Your skin burns!", "You learnt a new", "fire ability!", "");
+				}
+				else if( getTileFrontPlayer() == 4 )
+				{
+					infoMessage("You shine!", "You learnt a new", "gaia ability!", "");
+				}
+				else if( getTileFrontPlayer() == 5 )
+				{
+					infoMessage("Feeling light!", "You learnt a new", "water ability!", "");
+				}
+				else
+				{
+					infoMessage("There's nothing", "here, don't", "waste my time!", "Yo deaawg!!1");
+				}
 			}
 		}
 	}
+
+	if( Input::IsKeyJustPressed(ALLEGRO_KEY_SPACE) )
+	{
+		m_checkAbis = !m_checkAbis;
+	}
+
+	if( m_checkAbis )
+	{
+
+		if( !m_isInfo )
+		{
+			HudReturn hudReturn = m_hud.update();
+
+			switch( hudReturn )
+			{
+			case HudSuccess:
+
+				infoMessage(m_hud.getSelected()->desc1, m_hud.getSelected()->desc2, m_hud.getSelected()->desc3, m_hud.getSelected()->desc4);
+				break;
+			}
+		}
+		else
+		{
+			if( Input::IsKeyJustPressed(ALLEGRO_KEY_BACKSPACE) || Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
+			{
+				if( m_isInfo )
+				{
+					m_isInfo = false;
+				}
+			}
+		}
+	}
+
+
 }
 
 void MapScreen::scroll(Vec2f new_cam_pos, Camera& cam)
@@ -143,18 +189,29 @@ void MapScreen::map(const Matrix2Di &map)
 	Vec2i end = this->randomFreeTile();
 	m_map->set(end.x(), end.y(), 2);
 
-	end = this->randomFreeTile();
-	m_map->set(end.x(), end.y(), 3);
-	end = this->randomFreeTile();
-	m_map->set(end.x(), end.y(), 4);
-	end = this->randomFreeTile();
-	m_map->set(end.x(), end.y(), 5);
+	if( m_game->m_player->m_shapeLevel[0] < 3 )
+	{
+		end = this->randomFreeTile();
+		m_map->set(end.x(), end.y(), 3);
+	}
+
+	if( m_game->m_player->m_shapeLevel[1] < 3 )
+	{
+		end = this->randomFreeTile();
+		m_map->set(end.x(), end.y(), 4);
+	}
+
+	if( m_game->m_player->m_shapeLevel[2] < 3 )
+	{
+		end = this->randomFreeTile();
+		m_map->set(end.x(), end.y(), 5);
+	}
+
 }
 
 int MapScreen::getTileFrontPlayer(Vec2i* out)
 {
 	Vec2i tocheck(m_player->position().x() / 16, m_player->position().y() / 16);
-	std::cout << tocheck << std::endl;
 	if( m_player->facing() == 'u' )
 	{
 		tocheck = tocheck + Vec2i( 0, -1 );
@@ -175,8 +232,6 @@ int MapScreen::getTileFrontPlayer(Vec2i* out)
 	{
 		out->set(tocheck.x(), tocheck.y());
 	}
-	std::cout << tocheck << std::endl;
-	std::cout << m_map->get(tocheck.x(), tocheck.y()) << std::endl << "======" << std::endl;
 	return m_map->get(tocheck.x(), tocheck.y());
 }
 
@@ -225,13 +280,13 @@ void MapScreen::nextLevel(int level)
 
 	m_mapRenderer = std::make_shared<TileMapRenderer>(map(), tiles );
 	Vec2i fw = findFirstWalkable();
-	std::cout << fw << std::endl;
 	Vec2f player_pos( fw.x() * 16, fw.y() * 16 );
 	m_player.reset(new PlayerPawnMap(player_pos, map()));
 }
 
 void MapScreen::render()
 {
+
 	al_clear_to_color(al_map_rgb(0,0,0));
 	al_set_target_bitmap(al_get_backbuffer(m_game->display()));
 
@@ -241,21 +296,30 @@ void MapScreen::render()
 
 	m_game->m_camera2.bind();
 
+	al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 2, 70, 0, (std::string("Floor ") + std::to_string(m_game->m_floor)).c_str());
+
+
+	if( m_checkAbis )
+	{
+		m_hud.render();
+	}
+
 	if( m_isInfo )
 	{
-		al_draw_filled_rectangle(0, 44, 80, 80, al_map_rgb(172, 50, 50));
+		al_draw_filled_rectangle(0, 44, 80, 80, m_game->m_player->shapeColor());
 		int off = 46;
 		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, off, 0, m_infomessage1.c_str());
 		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, off + 8, 0, m_infomessage2.c_str());
 		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, off + 16, 0, m_infomessage3.c_str());
 		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, off + 24, 0, m_infomessage4.c_str());
-
 	}
 
 	al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 2, 2, 0, std::to_string(m_game->m_player->level()).c_str());
 	al_draw_filled_rectangle(14, 5, 78, 7, al_map_rgb(172, 50, 50));
 
 	al_draw_filled_rectangle(14, 5, 14 + m_game->m_player->expPercentage() * (78 - 14), 7, al_map_rgb(217, 87, 99));
+
+
 
 }
 

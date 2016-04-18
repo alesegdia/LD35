@@ -49,6 +49,10 @@ void BattleScreen::show()
 
 void BattleScreen::update(double delta)
 {
+	if( m_game->m_player->currentHP() <= 0 )
+	{
+		m_game->setScreen(m_game->m_loseScreen);
+	}
 	Assets::instance->Update(delta);
 	if( m_battleStatus == InfoTurn )
 	{
@@ -69,7 +73,6 @@ void BattleScreen::update(double delta)
 		m_infoForNotif = true;
 		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
 		{
-			std::cout << "MEH!";
 			notifs.pop();
 		}
 	}
@@ -112,11 +115,20 @@ void BattleScreen::update(double delta)
 			{
 				m_hudState = ChooseAbility;
 				Entity* ent = m_game->m_player.get();
-				m_hud.getSelected()->apply(ent, m_enemyHud.getSelecteds(m_hud.getSelected()));
+				int ret = m_hud.getSelected()->apply(ent, m_enemyHud.getSelecteds(m_hud.getSelected()));
 				m_game->m_player->stepStatusEffects(notifs);
 
 				m_enemyHud.checkAlive();
 				m_battleStatus = EnemyTurn;
+
+				if( ret == 2 )
+				{
+					message(m_battleStatus, "Eat crits for", "breakfast!!");
+				}
+				else if( ret == 0 )
+				{
+					message(m_battleStatus, "Darn, I missed");
+				}
 			}
 		}
 	}
@@ -124,17 +136,40 @@ void BattleScreen::update(double delta)
 	{
 		std::cout << "enemyturnin" << std::endl;
 		float damage = 0;
-		m_enemyHud.checkAlive();
+		//m_enemyHud.checkAlive();
 
-		if( m_enemyHud.enemyTurn( m_game->m_player, damage, notifs ) )
+		int atkresult = 0;
+		if( m_enemyHud.enemyTurn( m_game->m_player, damage, notifs, atkresult ) )
 		{
-			message(PlayerTurn, "Wow, that hurts!");
+			if( atkresult == 0 )
+			{
+				message(PlayerTurn, "Enemy miss!");
+			}
+			else if( atkresult == 1 )
+			{
+				message(PlayerTurn, "Wow, that hurts!");
+			}
+			else if( atkresult == 2 )
+			{
+				message(PlayerTurn, "Wow, that hurts", "even moar!!");
+			}
 			m_battleStatus = PlayerTurn;
 			m_game->m_player->turn();
 		}
 		else
 		{
-			message(EnemyTurn, "Wow, that hurts!");
+			if( atkresult == 0 )
+			{
+				message(EnemyTurn, "Enemy miss!");
+			}
+			else if( atkresult == 1 )
+			{
+				message(EnemyTurn, "Wow, that hurts!");
+			}
+			else if( atkresult == 2 )
+			{
+				message(EnemyTurn, "Wow, that hurts", "even moar!!");
+			}
 		}
 		m_enemyHud.checkAlive();
 

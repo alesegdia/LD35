@@ -21,7 +21,6 @@ MenuScreen::~MenuScreen()
 
 void MenuScreen::show()
 {
-	std::cout << "playin!" << std::endl;
 	Assets::instance->battle->pause();
 	if( !Assets::instance->music->playing() )
 	{
@@ -50,12 +49,12 @@ void MenuScreen::render()
 
 	m_game->m_camera2.bind();
 
-	al_clear_to_color(al_map_rgb(0,0,0));
+	al_clear_to_color(al_map_rgb(63,63,116));
 	al_set_target_bitmap(al_get_backbuffer(m_game->display()));
 
-	al_draw_text(m_game->m_fontBig, al_map_rgb(255, 255, 255), 0, 0, 0, "Phee");
-	al_draw_text(m_game->m_fontBig, al_map_rgb(255, 255, 255), 0, 20, 0, "Strew");
-	al_draw_text(m_game->m_fontBig, al_map_rgb(255, 255, 255), 0, 40, 0, "Quest");
+	al_draw_text(m_game->m_fontBig, al_map_rgb(203, 219, 252), 15, 11, 0, "Pheee");
+	al_draw_text(m_game->m_fontBig, al_map_rgb(203, 219, 252), 15, 31, 0, "Strew");
+	al_draw_text(m_game->m_fontBig, al_map_rgb(203, 219, 252), 15, 51, 0, "Quest");
 
 }
 

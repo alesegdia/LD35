@@ -10,6 +10,8 @@
 #include "../map/maprenderer.h"
 #include "../map/mapentity.h"
 
+#include "../battle/hud.h"
+
 
 class LD35;
 
@@ -54,6 +56,9 @@ private:
 	PlayerPawnMap::SharedPtr m_player;
 	Matrix2Di::SharedPtr m_map;
 
+	PlayerHud m_hud;
+
+
 	std::vector<Vec2i> m_freeTiles;
 
 	bool m_isInfo = false;
@@ -63,7 +68,11 @@ private:
 	std::string m_infomessage3;
 	std::string m_infomessage4;
 
+	bool m_justEntered = true;
+
 	Vec2i m_prevPlayerPos;
+
+	bool m_checkAbis = false;
 
 
 };

@@ -35,6 +35,8 @@ void LD35::create()
 	m_menuScreen.reset(new MenuScreen(this));
 	m_mapScreen.reset(new MapScreen(this));
 	m_battleScreen.reset(new BattleScreen(this));
+	m_loseScreen.reset(new LoseScreen(this));
+	m_midFloorScreen.reset(new MidFloorScreen(this));
 
 	Assets::instance->battle->pause();
 

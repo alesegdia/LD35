@@ -113,6 +113,11 @@ public:
 		}
 	}
 
+	void setPlayer( Player::SharedPtr player )
+	{
+		m_hud.setPlayer(player);
+	}
+
 private:
 	LD35* m_game;
 	PlayerHud m_hud;

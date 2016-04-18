@@ -12,6 +12,8 @@
 #include "screen/mapscreen.h"
 #include "screen/menuscreen.h"
 #include "screen/battlescreen.h"
+#include "screen/losescreen.h"
+#include "screen/midfloorscreen.h"
 
 #include "battle/entity.h"
 
@@ -31,6 +33,7 @@ public:
 		resetPlayer();
 		m_floor = 1;
 		setScreen(m_menuScreen);
+		m_battleScreen->setPlayer(m_player);
 		m_mapScreen->nextLevel(m_floor);
 	}
 
@@ -49,6 +52,8 @@ public:
 	std::shared_ptr<MenuScreen> m_menuScreen;
 	std::shared_ptr<MapScreen> m_mapScreen;
 	std::shared_ptr<BattleScreen> m_battleScreen;
+	std::shared_ptr<LoseScreen> m_loseScreen;
+	std::shared_ptr<MidFloorScreen> m_midFloorScreen;
 
 	Player::SharedPtr m_player;
 

@@ -46,8 +46,8 @@ void PlayerHud::render()
 	}
 
 	// draw player health bar
-	al_draw_filled_rectangle(3, 46, 77, 48, al_map_rgb(102, 57, 49));
-	al_draw_filled_rectangle(3, 46, 3 + m_player->lifePercentage() * (77.f - 3.f), 48, al_map_rgb(223, 113, 38));
+	al_draw_filled_rectangle(3, 46, 3 + 74,											48, al_map_rgb(102, 57, 49));
+	al_draw_filled_rectangle(3, 46, 3 + m_player->lifePercentage() * (74.f),	48, al_map_rgb(223, 113, 38));
 
 }
 

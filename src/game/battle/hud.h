@@ -49,6 +49,11 @@ public:
 
 	Ability::SharedPtr getSelected();
 
+	void setPlayer( Player::SharedPtr player )
+	{
+		m_player = player;
+	}
+
 
 private:
 	Player::SharedPtr m_player;
@@ -86,18 +91,30 @@ public:
 
 	void setHover(bool hover);
 
-	bool enemyTurn( Player::SharedPtr player, float& damage, std::stack<std::string>& notifstack )
+	bool enemyTurn( Player::SharedPtr player, float& damage, std::stack<std::string>& notifstack, int& attackresult )
 	{
+		attackresult = 0;
 		for( m_nextEnemyTurn; m_nextEnemyTurn < LayoutWidth * LayoutHeight; m_nextEnemyTurn++ )
 		{
 			Enemy::SharedPtr e = m_enemyLayout.data()[m_nextEnemyTurn];
-			if( e != nullptr && !e->isStunned() )
+			if( e != nullptr )
 			{
-				std::vector<Entity*> playerlist = { player.get() };
-				e->abilities()[0]->apply((Entity*)e.get(), playerlist);
 				e->stepStatusEffects(notifstack);
-				m_nextEnemyTurn++;
-				break;
+
+				bool dobreak = false;
+				if( !e->isStunned() )
+				{
+					std::vector<Entity*> playerlist = { player.get() };
+					attackresult = e->abilities()[0]->apply((Entity*)e.get(), playerlist);
+					m_nextEnemyTurn++;
+					dobreak = true;
+				}
+
+
+				if( dobreak )
+				{
+					break;
+				}
 			}
 		}
 

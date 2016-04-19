@@ -199,19 +199,19 @@ void MapScreen::map(const Matrix2Di &map)
 	Vec2i end = this->randomFreeTile();
 	m_map->set(end.x(), end.y(), 2);
 
-	if( m_game->m_player->m_shapeLevel[0] < 3 )
+	if( m_game->m_player->m_shapeLevel[0] < 4 )
 	{
 		end = this->randomFreeTile();
 		m_map->set(end.x(), end.y(), 3);
 	}
 
-	if( m_game->m_player->m_shapeLevel[1] < 3 )
+	if( m_game->m_player->m_shapeLevel[1] < 4 )
 	{
 		end = this->randomFreeTile();
 		m_map->set(end.x(), end.y(), 4);
 	}
 
-	if( m_game->m_player->m_shapeLevel[2] < 3 )
+	if( m_game->m_player->m_shapeLevel[2] < 4 )
 	{
 		end = this->randomFreeTile();
 		m_map->set(end.x(), end.y(), 5);

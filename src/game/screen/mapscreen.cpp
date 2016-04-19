@@ -277,8 +277,9 @@ Vec2i MapScreen::randomFreeTile()
 
 void MapScreen::nextLevel(int level)
 {
-	static constexpr int n = 10;
-	map(RandomWalkerGenerator().generate(n * level, n * level));
+	static constexpr int n = 5;
+	map(RandomWalkerGenerator().generate(10 + n * level, 10 + n * level));
+	//map(RandomWalkerGenerator().generate(n, n));
 
 	std::vector<ALLEGRO_BITMAP*> tiles;
 	tiles.push_back(Assets::instance->tilesetSheet->getFrame(1, 0));

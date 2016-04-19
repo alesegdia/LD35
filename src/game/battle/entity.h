@@ -542,7 +542,7 @@ public:
 
 	int computeExp()
 	{
-		return m_stats.agi + m_stats.atk + m_stats.def + m_stats.hp / 2;
+		return 1.2f * m_stats.agi + 1.5f * m_stats.atk + 1.4f * m_stats.def + m_stats.hp * 1.1f;
 	}
 
 private:
@@ -570,7 +570,7 @@ public:
 
 	static Enemy::SharedPtr makeEnemyStats( int type, int points )
 	{
-		Stats stats(points * 2, points, points, points);
+		Stats stats(points * 1.3f, points, points, points);
 		Enemy::SharedPtr enemy(new Enemy(stats, type));
 		return enemy;
 	}
@@ -592,7 +592,7 @@ private:
 public:
 	typedef std::shared_ptr<Player> SharedPtr;
 
-	Player() : Entity(Stats(50, 5, 5, 5), Stats(1,1,1,1))
+	Player() : Entity(Stats(100, 5, 5, 5), Stats(1,1,1,1))
 	{
 		abilities().push_back(Ability::SharedPtr(new Ability(Water, "Gob", PickSingle, &(aps.damageAP), 2.f, -2.f,
 															 "Low damage.", "Get saliva", "and SHOT!!")));
@@ -722,8 +722,9 @@ public:
 			case 3:
 				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Earthquake", Pick2x2Block, &(aps.damageAP), 3.f, 4.f,
 																	 "All enemies.", "High damage.", "Did someone fart?")));
+				break;
 			case 4:
-				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Meteor", PickAll, &(aps.damageAP), 3.f, 1.f,
+				abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Meteor", PickSingle, &(aps.damageAP), 8.f, 1.f,
 																	 "High damage", "single enemy.", "Zurians meteor", "in your face.")));
 				break;
 			}
@@ -782,28 +783,31 @@ public:
 			switch( currentShape )
 			{
 			case Water:
-				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(3) + " agi!";
-				m_stats.agi += 3;
-				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(1) + " def!";
-				m_stats.def += 1;
-				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(2) + " atk!";
-				m_stats.atk += 2;
+				m_stats.hp += 10;
+				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(4) + " agi!";
+				m_stats.agi += 4;
+				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(2) + " def!";
+				m_stats.def += 2;
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(3) + " atk!";
+				m_stats.atk += 3;
 				break;
 			case Gaia:
+				m_stats.hp += 15;
 				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(3) + " agi!";
 				m_stats.agi += 3;
-				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(4) + " def!";
-				m_stats.def += 4;
-				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(1) + " def!";
-				m_stats.atk += 1;
+				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(6) + " def!";
+				m_stats.def += 6;
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(2) + " def!";
+				m_stats.atk += 2;
 				break;
 			case Fire:
-				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(2) + " agi!";
-				m_stats.agi += 2;
-				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(1) + " def!";
-				m_stats.def += 1;
-				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(3) + " def!";
-				m_stats.atk += 3;
+				m_stats.hp += 5;
+				levelingNotification.text4 = std::to_string((int)m_stats.agi) + " + " + std::to_string(3) + " agi!";
+				m_stats.agi += 3;
+				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(2) + " def!";
+				m_stats.def += 2;
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(4) + " def!";
+				m_stats.atk += 4;
 				break;
 			}
 		}

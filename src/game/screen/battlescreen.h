@@ -105,7 +105,7 @@ public:
 
 		while( r > 0 && generated.size() < 6)
 		{
-			Enemy::SharedPtr e = EntityFactory::makeEnemyStats(RNG::rng->nextInt(4), f * 5);
+			Enemy::SharedPtr e = EntityFactory::makeEnemyStats(RNG::rng->nextInt(4), f * 3);
 			partyExperience += e->computeExp();
 			m_enemyHud.add(e);
 			r--;

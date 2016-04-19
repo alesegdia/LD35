@@ -27,7 +27,7 @@ There are 3 shapes with 3 abilities learnt each.
 
 * Gaia: def+ str-
   * Earthquake: high damage to all enemies
-  * Spike Shield: during 5 turns, if an enemy attacks you, the attacking enemy receives a portion of the damage dealt to you.
+  * Mega Shell: during 5 turns, defense is + 200%.
   * Regen: regenerates health during 4 turns
 
 * Fire: str+, agi-

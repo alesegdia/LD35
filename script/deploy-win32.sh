@@ -6,4 +6,4 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-toolchain.cmake ..
 make -j8
 cd ..
 
-zip winver.zip bin/win32/* bin/win32/**/*
+zip pheee-win.zip bin/win32/* bin/win32/**/*

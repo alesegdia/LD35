@@ -6,4 +6,4 @@ cmake ..
 make -j8
 cd ..
 
-zip linver.zip bin/linux/* bin/linux/**/*
+zip pheee-lin.zip bin/linux/* bin/linux/**/*

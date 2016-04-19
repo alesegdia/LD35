@@ -65,7 +65,7 @@ public:
 	typedef std::shared_ptr<FilteredDebugMapRenderer> SharedPtr;
 	FilteredDebugMapRenderer( Matrix2Di::SharedPtr map, Matrix2Di::SharedPtr visited, int ext = 3 );
 
-	void renderCell(int x, int y, int cell_value) override;
+	void renderCell(int x, int y, int cell_value) final;
 
 	int width()
 	{

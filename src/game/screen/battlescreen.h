@@ -99,7 +99,7 @@ public:
 	void makePartyForFloor( int f )
 	{
 		std::list<Enemy::SharedPtr> generated;
-		int r = RNG::rng->nextInt(f+1) + 1;
+		int r = 1 + RNG::rng->nextInt(f);
 
 		partyExperience = 0;
 

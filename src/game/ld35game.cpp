@@ -57,6 +57,14 @@ void LD35::dispose()
 void LD35::update(double delta)
 {
 
+	if( m_player != nullptr )
+	{
+		if( Input::IsKeyJustPressed(ALLEGRO_KEY_F12) )
+		{
+			m_player->unlockAll();
+		}
+	}
+
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F1) )
 	{
 		setScreen(m_menuScreen);

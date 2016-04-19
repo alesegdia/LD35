@@ -601,25 +601,30 @@ public:
 		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Shard", Pick2x2Block, &(aps.stunAttackAP), 0.5f, 2.f,
 															 "Stun block", "of enemies.", "Throw one rock,", "enjoy all day.")));
 
-		/*
-		unlock(Gaia);
-		unlock(Gaia);
-		unlock(Gaia);
-
-		unlock(Fire);
-		unlock(Fire);
-		unlock(Fire);
-
-		unlock(Water);
-		unlock(Water);
-		unlock(Water);
-		*/
 
 		// WATER
 
 		// GAIA
 
 		// FIRE
+	}
+
+	void unlockAll()
+	{
+		unlock(Gaia);
+		unlock(Gaia);
+		unlock(Gaia);
+		unlock(Gaia);
+
+		unlock(Fire);
+		unlock(Fire);
+		unlock(Fire);
+		unlock(Fire);
+
+		unlock(Water);
+		unlock(Water);
+		unlock(Water);
+		unlock(Water);
 	}
 
 	void turn()

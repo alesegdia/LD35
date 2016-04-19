@@ -7,8 +7,8 @@ Assets* Assets::instance = nullptr;
 Assets::Assets()
 {
 	// ALLOC RESOURCES!!
-	music.reset(new AudioStream("assets/ingame.ogg"));
-	battle.reset(new AudioStream("assets/jefe.ogg"));
+	music.reset(new AudioStream("assets/ingame.ogg", ALLEGRO_PLAYMODE_LOOP));
+	battle.reset(new AudioStream("assets/jefe.ogg", ALLEGRO_PLAYMODE_LOOP));
 
 	tileset = al_load_bitmap("assets/tileset.png");
 	tilesetSheet.reset(new Spritesheet(5, 6, tileset));

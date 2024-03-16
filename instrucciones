@@ -1,0 +1,6 @@
+cd build
+cmake -DCMAKE_GENERATOR_PLATFORM=Win32 ..
+abrir propiedades alligator > poner PreferredBuildTool a x86
+click derecho, build
+abrir propiedades ld35      > poner PreferredBuildTool a x86
+click derecho, build

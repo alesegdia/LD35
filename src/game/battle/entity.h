@@ -8,6 +8,8 @@
 #include <vector>
 #include <stack>
 
+#include <string>
+
 enum Stat {
 	HP, ATK, DEF, AGI, NONE
 };
@@ -69,7 +71,7 @@ public:
 	void decreaseHP( float qtt )
 	{
 		m_currentHP -= qtt;
-		m_currentHP = std::max(0.f, m_currentHP);
+		m_currentHP = max(0.f, m_currentHP);
 	}
 
 	void healHP( float qtt )
@@ -342,7 +344,7 @@ public:
 				if( !decideMiss )
 				{
 					float target_def = DEF_FACTOR * target->getStat(DEF);
-					float dmg = std::max(0.f, source_atk * ability->effectiveness() - target_def) * DMG_FACTOR;
+					float dmg = max(0.f, source_atk * ability->effectiveness() - target_def) * DMG_FACTOR;
 					// std::cout << "effec: " << ability->effectiveness() << ", srcatk: " << source_atk << ", tgtdef: " << target_def << ", dmg: " << dmg << std::endl;
 
 					bool decideCrit = rollCritical(source, target);
@@ -352,7 +354,7 @@ public:
 						ret = 2;
 					}
 
-					target->decreaseHP(std::max(0.f, dmg));
+					target->decreaseHP(max(0.f, dmg));
 					if( m_model != nullptr )
 					{
 						StatusEffect::SharedPtr se(new StatusEffect);

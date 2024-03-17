@@ -20,8 +20,11 @@ BattleScreen::~BattleScreen()
 void BattleScreen::show()
 {
 	Assets::instance->music->pause();
-	Assets::instance->battle->rewind();
-	Assets::instance->battle->play();
+	if (!Assets::instance->battle->playing())
+	{
+		Assets::instance->battle->rewind();
+		Assets::instance->battle->play();
+	}
 
 
 	m_enemyHud.clear();

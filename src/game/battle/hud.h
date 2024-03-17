@@ -32,6 +32,8 @@ public:
 	virtual HudReturn update() = 0 ;
 };
 
+class EnemyHud;
+
 class PlayerHud : public GenericHud
 {
 public:
@@ -54,10 +56,16 @@ public:
 		m_player = player;
 	}
 
+	void SetEnemyHud(EnemyHud* enemyHud)
+	{
+		m_enemyHud = enemyHud;
+	}
+
 
 private:
 	Player::SharedPtr m_player;
 	ALLEGRO_FONT* m_font;
+	EnemyHud* m_enemyHud;
 
 	int m_top = 0;
 	int m_bot = 3;
@@ -82,6 +90,11 @@ public:
 	void clear();
 
 	void checkAlive();
+
+	bool hasEnemyAt(int x, int y)
+	{
+		return m_enemyLayout.get(x, y) != nullptr;
+	}
 
 	void set( Enemy::SharedPtr enemy, int x, int y );
 

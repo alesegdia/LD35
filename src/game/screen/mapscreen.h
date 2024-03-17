@@ -76,6 +76,8 @@ private:
 
 	Matrix2Di::SharedPtr visible;
 
+	bool m_escapeState = false;
+
 
 };
 

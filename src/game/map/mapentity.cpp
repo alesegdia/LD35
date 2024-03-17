@@ -180,9 +180,47 @@ void PlayerPawnMap::applySpeed(double delta)
 	move(m_speed.x() * delta * speed, m_speed.y() * delta * speed);
 }
 
-void PlayerPawnMap::update(double delta)
+
+void PlayerPawnMap::visualUpdate(double delta)
 {
 	MapEntity::update(delta);
+
+	if (Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) && !m_isInteracting)
+	{
+		if (m_facing == 'u')
+		{
+			setAnim(Assets::instance->playerInteractU);
+		}
+		if (m_facing == 'd')
+		{
+			setAnim(Assets::instance->playerInteractD);
+		}
+		if (m_facing == 'l')
+		{
+			setAnim(Assets::instance->playerInteractL);
+		}
+		if (m_facing == 'r')
+		{
+			setAnim(Assets::instance->playerInteractR);
+		}
+
+		previousAnim = m_anim;
+
+		m_isInteracting = true;
+	}
+
+
+}
+
+void PlayerPawnMap::clearInteract()
+{
+	setAnim(previousAnim);
+	m_isInteracting = false;
+
+}
+
+void PlayerPawnMap::update(double delta)
+{
 
 	parseInput();
 	//freeMovement();

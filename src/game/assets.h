@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
 #include <alligator/graphics/spritesheet.h>
 #include <alligator/graphics/animation.h>
 #include <alligator/audio/audiosample.h>
@@ -40,6 +41,11 @@ public:
 	Animation::SharedPtr playerStandL;
 	Animation::SharedPtr playerStandR;
 
+	Animation::SharedPtr playerInteractU;
+	Animation::SharedPtr playerInteractD;
+	Animation::SharedPtr playerInteractL;
+	Animation::SharedPtr playerInteractR;
+
 	Animation::SharedPtr playerWalkU;
 	Animation::SharedPtr playerWalkD;
 	Animation::SharedPtr playerWalkL;
@@ -67,6 +73,8 @@ public:
 	Animation::SharedPtr eneAnims[5];
 
 	AnimationData eneAnimsData[5];
+
+	ALLEGRO_FONT* font;
 
 
 	void Update(double delta)

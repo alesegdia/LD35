@@ -174,6 +174,33 @@ public:
 		return m_stunned;
 	}
 
+	bool isBurnt()
+	{
+		return hasEffect(StatusEffectType::Burnt);
+	}
+
+	bool hasEffect(StatusEffectType effect)
+	{
+		return TurnsLeftForStatus(effect);
+	}
+
+	int TurnsLeftForStatus(StatusEffectType effect)
+	{
+		for (auto item : status)
+		{
+			if (item->type == effect)
+			{
+				return item->turnsLeft;
+			}
+		}
+		return -1;
+	}
+
+	const std::vector<StatusEffect::SharedPtr> GetStatuses()
+	{
+		return status;
+	}
+
 	std::vector<StatusEffect::SharedPtr> status;
 
 protected:
@@ -493,7 +520,7 @@ public:
 		burning2.type = Burnt;
 		burning2.value = 0; // IGNORED BECAUSE IT'S A MODEL
 		//burnAP.setModel(&burning);
-		burnAP2.setup(false, &burning, ATK, 0.2f);
+		burnAP2.setup(false, &burning2, ATK, 0.2f);
 
 		healing.turnsLeft = 4;
 		healing.type = Healing;
@@ -601,8 +628,9 @@ public:
 		abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Chaos Fart", Pick2x2Block, &(aps.damageAP), 1.f, -2.f,
 															 "Low damage,", "all enemies.", "Nothing like", "good ol' farts.")));
 		abilities().push_back(Ability::SharedPtr(new Ability(Gaia, "Shard", Pick2x2Block, &(aps.stunAttackAP), 0.5f, 2.f,
-															 "Stun block", "of enemies.", "Throw one rock,", "enjoy all day.")));
+															 "Stun 2x2 block", "of enemies.", "Throw one rock,", "enjoy all day.")));
 
+		// unlockAll();
 
 		// WATER
 
@@ -697,7 +725,7 @@ public:
 				break;
 			case 3:
 				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Demolecularize", PickSelf, &(aps.demolecAP), 1.f, 6,
-																	 "Agi +200%!!", "You fade", "beyond your", "oponents, dawg")));
+																	 "Agi +200%!!", "You fade", "through your", "oponents, dawg")));
 				break;
 			case 4:
 				abilities().push_back(Ability::SharedPtr(new Ability(Water, "Mare Nostrum", PickAll, &(aps.damageAP), 5.f, 6,
@@ -740,14 +768,14 @@ public:
 			{
 			case 1:
 				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Torch", PickSingle, &(aps.burnAP2), 0.5f, 1.f,
-																	 "Affects block", "of enemies.", "Provokes burn.", "Stack it, dawg!")));
+																	 "Do you have", "a light?", "Provokes burn.", "Stack it, dawg!")));
 				break;
 			case 2:
-				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Flame Fists", PickSelf, &(aps.fistAP), 1, 6)));
+				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Flame Fists", PickSelf, &(aps.fistAP), 1, 6, "I deal moar", "damage yes!", "Well, during", "the effect...")));
 				break;
 			case 3:
 				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Blaze", Pick2x2Block, &(aps.burnAP), 2, 6.f,
-																	 "Affects block", "of enemies.", "Provokes burn.", "EVEN FIRER!!")));
+																	 "Affects 2x2 block", "of enemies.", "Provokes burn.", "EVEN FIRER!!")));
 				break;
 			case 4:
 				abilities().push_back(Ability::SharedPtr(new Ability(Fire, "Magma", PickAll, &(aps.damageAP), 3, 8.f,
@@ -799,7 +827,7 @@ public:
 				m_stats.agi += 3;
 				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(6) + " def!";
 				m_stats.def += 6;
-				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(2) + " def!";
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(2) + " atk!";
 				m_stats.atk += 2;
 				break;
 			case Fire:
@@ -808,7 +836,7 @@ public:
 				m_stats.agi += 3;
 				levelingNotification.text3 = std::to_string((int)m_stats.def) + " + " + std::to_string(2) + " def!";
 				m_stats.def += 2;
-				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(4) + " def!";
+				levelingNotification.text2 = std::to_string((int)m_stats.atk) + " + " + std::to_string(4) + " atk!";
 				m_stats.atk += 4;
 				break;
 			}

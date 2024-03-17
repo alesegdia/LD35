@@ -1,5 +1,6 @@
 #include "assets.h"
 #include <iostream>
+#include <allegro5/allegro_ttf.h>
 
 
 Assets* Assets::instance = nullptr;
@@ -40,6 +41,30 @@ Assets::Assets()
 
 	playerWalkR.reset(new Animation(0.1f, 6));
 	playerWalkR->addFrames(playerSheet->getFrames(18, 23));
+
+
+
+	playerInteractU.reset(new Animation(0.1f, 3));
+	playerInteractU->addFrame(playerSheet->getFrame(0, 9));
+	playerInteractU->addFrame(playerSheet->getFrame(1, 9));
+	playerInteractU->addFrame(playerSheet->getFrame(2, 9));
+
+	playerInteractD.reset(new Animation(0.1f, 3));
+	playerInteractD->addFrame(playerSheet->getFrame(0, 8));
+	playerInteractD->addFrame(playerSheet->getFrame(1, 8));
+	playerInteractD->addFrame(playerSheet->getFrame(2, 8));
+
+	playerInteractL.reset(new Animation(0.1f, 3));
+	playerInteractL->addFrame(playerSheet->getFrame(0, 10));
+	playerInteractL->addFrame(playerSheet->getFrame(1, 10));
+	playerInteractL->addFrame(playerSheet->getFrame(2, 10));
+
+	playerInteractR.reset(new Animation(0.1f, 3));
+	playerInteractR->addFrame(playerSheet->getFrame(0, 11));
+	playerInteractR->addFrame(playerSheet->getFrame(1, 11));
+	playerInteractR->addFrame(playerSheet->getFrame(2, 11));
+
+
 
 	cursorUp = tilesetSheet->getFrame(3, 1);
 	cursorDown = tilesetSheet->getFrame(3, 0);
@@ -92,6 +117,8 @@ Assets::Assets()
 	errorSfx.reset(new AudioSample("assets/fxbad.ogg"));
 	levelupSfx.reset(new AudioSample("assets/fxlevelup.ogg"));
 
+	font = al_load_ttf_font("assets/dafont.ttf", 8, 0);
+
 }
 
 Assets::~Assets()
@@ -105,6 +132,8 @@ Assets::~Assets()
 	al_destroy_bitmap(ene3);
 	al_destroy_bitmap(ene4);
 	al_destroy_bitmap(ene5);
+
+	al_destroy_font(font);
 }
 
 void Assets::Initialize()

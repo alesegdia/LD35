@@ -3,6 +3,8 @@
 
 #include <allegro5/allegro_primitives.h>
 
+#include <unordered_map>
+
 PlayerHud::PlayerHud(Player::SharedPtr player, ALLEGRO_FONT *font)
 	: m_player(player), m_font(font)
 {
@@ -46,8 +48,32 @@ void PlayerHud::render()
 	}
 
 	// draw player health bar
-	al_draw_filled_rectangle(3, 46, 3 + 74,											48, al_map_rgb(102, 57, 49));
-	al_draw_filled_rectangle(3, 46, 3 + m_player->lifePercentage() * (74.f),	48, al_map_rgb(223, 113, 38));
+	al_draw_filled_rectangle(3, 46, 3 + 74,											49, al_map_rgb(102, 57, 49));
+	al_draw_filled_rectangle(3, 46, 3 + m_player->lifePercentage() * (74.f),	49, al_map_rgb(223, 113, 38));
+
+	int basex = 4;
+	int basey = 50;
+	std::unordered_map<StatusEffectType, ALLEGRO_COLOR> lemap = {
+	{ StatusEffectType::Stun,	 al_map_rgba(128, 128, 128, 255) },
+	{ StatusEffectType::Burnt,	 al_map_rgba(255,   0,   0, 255) },
+	{ StatusEffectType::Demolec, al_map_rgba(164, 164, 255, 255) },
+	{ StatusEffectType::Fist,    al_map_rgba(255, 164, 164, 255) },
+	{ StatusEffectType::Healing, al_map_rgba(64, 255, 64, 255) },
+	{ StatusEffectType::Shell,   al_map_rgba(164, 255, 164, 255) }
+	};
+
+	int idx = 0;
+	for (auto status : m_player->GetStatuses())
+	{
+		auto effectTurns = status->turnsLeft;
+		while (effectTurns > 0)
+		{
+			al_draw_filled_rectangle(basex + idx, basey - 3, basex + idx + 1, basey - 3 + 1, lemap[status->type]);
+			idx += 2;
+			effectTurns--;
+		}
+	}
+
 
 }
 
@@ -181,10 +207,9 @@ HudReturn EnemyHud::update()
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_UP) )
 	{
-		if( m_selectedY - 1 >= 0 )
+		if( m_selectedY - 1 >= 0) // && hasEnemyAt(m_selectedX, m_selectedY - 1))
 		{
 			Assets::instance->clickSfx->play();
-
 			m_selectedY--;
 		}
 		else
@@ -195,10 +220,9 @@ HudReturn EnemyHud::update()
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_DOWN) )
 	{
-		if( m_selectedY + 1 < LayoutHeight )
+		if( m_selectedY + 1 < LayoutHeight) // && hasEnemyAt(m_selectedX, m_selectedY + 1))
 		{
 			Assets::instance->clickSfx->play();
-
 			m_selectedY++;
 		}
 		else
@@ -209,7 +233,7 @@ HudReturn EnemyHud::update()
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_LEFT) )
 	{
-		if( m_selectedX - 1 >= 0 )
+		if( m_selectedX - 1 >= 0) // && hasEnemyAt(m_selectedX - 1, m_selectedY))
 		{
 			Assets::instance->clickSfx->play();
 
@@ -223,7 +247,7 @@ HudReturn EnemyHud::update()
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_RIGHT) )
 	{
-		if( m_selectedX + 1 < LayoutWidth )
+		if( m_selectedX + 1 < LayoutWidth) // && hasEnemyAt(m_selectedX + 1, m_selectedY))
 		{
 			Assets::instance->clickSfx->play();
 
@@ -337,7 +361,8 @@ void EnemyHud::setupSelection(Ability::SharedPtr ability)
 {
 	m_ignore = ability->pickType() == PickSelf;
 	m_ability = ability;
-	m_selectedX = m_selectedY = 0;
+	m_selectedX = 1;
+	m_selectedY = 0;
 	m_hover = true;
 }
 
@@ -350,6 +375,28 @@ void EnemyHud::drawHealthFor(Enemy::SharedPtr enemy, int x, int y)
 {
 	al_draw_filled_rectangle(x, y-2, x + 16, y-1, al_map_rgba(153, 229, 80, 255));
 	al_draw_filled_rectangle(x, y-2, x + 16 * enemy->lifePercentage(), y-1, al_map_rgba(55, 148, 110, 255));
+
+	std::unordered_map<StatusEffectType, ALLEGRO_COLOR> lemap = {
+		{ StatusEffectType::Stun,	 al_map_rgba(128, 128, 128, 255) },
+		{ StatusEffectType::Burnt,	 al_map_rgba(255,   0,   0, 255) },
+		{ StatusEffectType::Demolec, al_map_rgba( 64,  64, 255, 255) },
+		{ StatusEffectType::Fist,    al_map_rgba(128, 128,   0, 255) },
+		{ StatusEffectType::Healing, al_map_rgba(  0, 255,   0, 255) },
+		{ StatusEffectType::Shell,   al_map_rgba(128, 128, 255, 255) }
+	};
+
+	int idx = 0;
+	for (auto status : enemy->GetStatuses())
+	{
+		auto effectTurns = status->turnsLeft;
+		while (effectTurns > 0)
+		{
+			al_draw_filled_rectangle(x + idx, y - 3, x + idx + 1, y - 3 + 1, lemap[status->type]);
+			idx += 2;
+			effectTurns--;
+		}
+	}
+
 }
 
 GenericHud::~GenericHud()

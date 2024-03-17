@@ -25,6 +25,8 @@ private:
 	float timer = 0.f;
 	float param = 1.f;
 	int points = 0 ;
+	int m_state = 0;
+	bool m_escapeState = false;
 
 };
 

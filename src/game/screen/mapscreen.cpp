@@ -37,6 +37,24 @@ void MapScreen::show()
 
 void MapScreen::update(double delta)
 {
+	if (Input::IsKeyDown(ALLEGRO_KEY_ESCAPE))
+	{
+		m_escapeState = true;
+	}
+
+
+	if (m_escapeState)
+	{
+		if (Input::IsKeyDown(ALLEGRO_KEY_Y))
+		{
+			m_game->close();
+		}
+		else if (Input::IsKeyDown(ALLEGRO_KEY_N))
+		{
+			m_escapeState = false;
+		}
+		return;
+	}
 
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_TAB) )
 	{
@@ -45,14 +63,27 @@ void MapScreen::update(double delta)
 		m_game->setScreen(m_game->m_minimapScreen);
 	}
 
+	if (Input::IsKeyJustPressed(ALLEGRO_KEY_F))
+	{
+		Assets::instance->music->pause();
+	}
+
+	if (Input::IsKeyJustPressed(ALLEGRO_KEY_G))
+	{
+		Assets::instance->music->resume();
+	}
+
 	m_mapRenderer->center(m_player->tile().x(), m_player->tile().y());
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F5) ) m_game->advanceFloor();
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_F6) ) m_game->endGame();
 
+	bool skipVisualUpdateXD = false;
 	if( m_isInfo )
 	{
 		if( Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER) )
 		{
+			skipVisualUpdateXD = true;
+			m_player->clearInteract();
 			m_isInfo = false;
 			Vec2i front_tile_coords;
 			int front_tile = getTileFrontPlayer(&front_tile_coords);
@@ -87,9 +118,11 @@ void MapScreen::update(double delta)
 	}
 	else
 	{
+
 		if( !m_checkAbis )
 		{
-			m_player->update(delta);
+			if(!Input::IsKeyJustPressed(ALLEGRO_KEY_ENTER)) m_player->update(delta);
+
 			if( m_player->tile() != m_prevPlayerPos && !m_justEntered )
 			{
 				// try new battle!
@@ -107,7 +140,7 @@ void MapScreen::update(double delta)
 			{
 				if( getTileFrontPlayer() == 2 )
 				{
-					infoMessage("ENTER: next floor", "BACK: cancel", "yo dawg", "that was ez");
+					infoMessage("ENTER: next floor", "BACKSPACE: cancel", "yo dawg...", "that was ez!");
 				}
 				else if( getTileFrontPlayer() == 3 )
 				{
@@ -132,6 +165,11 @@ void MapScreen::update(double delta)
 	if( Input::IsKeyJustPressed(ALLEGRO_KEY_SPACE) )
 	{
 		m_checkAbis = !m_checkAbis;
+	}
+
+	if (!skipVisualUpdateXD)
+	{
+		m_player->visualUpdate(delta);
 	}
 
 	if( m_checkAbis )
@@ -299,6 +337,20 @@ void MapScreen::nextLevel(int level)
 void MapScreen::render()
 {
 
+	if (m_escapeState)
+	{
+		m_game->m_camera2.bind();
+
+		al_clear_to_color(al_map_rgb(63, 63, 116));
+		al_set_target_bitmap(al_get_backbuffer(m_game->display()));
+
+		al_draw_text(m_game->m_font, al_map_rgb(203, 219, 252), 15, 11, 0, "Quit game?");
+		al_draw_text(m_game->m_font, al_map_rgb(203, 219, 252), 20, 20, 0, "(Y/N)");
+
+		return;
+	}
+
+
 	al_clear_to_color(al_map_rgb(0,0,0));
 	al_set_target_bitmap(al_get_backbuffer(m_game->display()));
 
@@ -326,10 +378,12 @@ void MapScreen::render()
 		al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 4, off + 24, 0, m_infomessage4.c_str());
 	}
 
-	al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 2, 2, 0, std::to_string(m_game->m_player->level()).c_str());
-	al_draw_filled_rectangle(14, 5, 78, 7, al_map_rgb(172, 50, 50));
+	al_draw_text(m_game->m_font, al_map_rgb(255, 255, 255), 2, 2, 0, (std::string("LV.") + std::to_string(m_game->m_player->level())).c_str());
 
-	al_draw_filled_rectangle(14, 5, 14 + m_game->m_player->expPercentage() * (78 - 14), 7, al_map_rgb(217, 87, 99));
+	float offx = 18;
+	al_draw_filled_rectangle(offx, 5, 78, 7, al_map_rgb(172, 50, 50));
+
+	al_draw_filled_rectangle(offx, 5, offx + m_game->m_player->expPercentage() * (78 - offx), 7, al_map_rgb(217, 87, 99));
 
 
 

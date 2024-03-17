@@ -80,11 +80,6 @@ void LD35::update(double delta)
 		setScreen(m_battleScreen);
 	}
 
-	if( Input::IsKeyJustPressed(ALLEGRO_KEY_ESCAPE) )
-	{
-		close();
-	}
-
 	Game::update(delta);
 }
 

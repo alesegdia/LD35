@@ -28,11 +28,11 @@ public:
 
 protected:
 	void setAnim( Animation::SharedPtr anim );
+	Animation::SharedPtr m_anim;
 
 
 private:
 	Vec2f m_position;
-	Animation::SharedPtr m_anim;
 	AnimationData m_animData;
 	Matrix2Di::SharedPtr m_map;
 
@@ -49,6 +49,10 @@ public:
 	PlayerPawnMap( const Vec2f& pos, Matrix2Di::SharedPtr map  );
 
 	void update(double delta) override;
+
+	void visualUpdate(double delta);
+
+	void clearInteract();
 
 	char facing()
 	{
@@ -72,6 +76,10 @@ private:
 
 	Vec2i m_nextTile;
 	Vec2i m_currentTile;
+
+	bool m_isInteracting = false;
+
+	Animation::SharedPtr previousAnim;
 
 };
 
